@@ -10,5 +10,5 @@ export class Playlist {
   display: Display;
 
   @ManyToMany(() => Content, (content) => content.playlists)
-  content: Content;
+  content: Map<number,Content>;
 }

@@ -3,7 +3,7 @@ import { IsString } from "class-validator";
 import { Playlist } from "src/playlist/entities/playlist.entity";
 import { Column, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
-enum CONTENT_TYPE {
+export enum CONTENT_TYPE {
 	PICTURE,
 	HTML,
 	VIDEO,
