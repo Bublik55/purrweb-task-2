@@ -9,13 +9,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 
 @Entity()
 export class User {
-    constructor(dto: CreateUserDto) {
-        this.id = String(randomUUID);
-        this.name = dto.name;
-        this.email = dto.email;
-        this.password = dto.password;
-    }
-
+ 
     @ApiProperty({
         example: randomUUID,
         type: String
@@ -29,7 +23,7 @@ export class User {
         type: String
     })
     @IsString()
-    @Column('text') name: string;
+    @Column('text') name: string = "sss";
 
     @ApiProperty({
         description: "HASHED User's password",
@@ -37,7 +31,7 @@ export class User {
         type: String
     })
     @IsString()
-    @Column('text') password: string;
+    @Column('text') password: string = "def";
 
     @ApiProperty({
         description: "User's email",
@@ -45,7 +39,7 @@ export class User {
         type: String
     })
     @IsEmail()
-    @Column('text') email: string;
+    @Column('text') email: string = "ss";
 
     @ApiProperty({
         description: "User's events",

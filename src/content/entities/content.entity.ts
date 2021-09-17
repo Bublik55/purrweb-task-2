@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString } from "class-validator";
 import { Playlist } from "src/playlist/entities/playlist.entity";
+import { ContentToPlaylist } from "src/playlist/entities/content-to-playlist.entity";
 import { Column, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 export enum CONTENT_TYPE {
@@ -36,10 +37,10 @@ export class Content {
 	@IsString()
 	@Column('text') url: string;
 
-
-	@ApiProperty({
-		description: "Playlists which contain current content/src"
-	})
-	@ManyToMany(() => Playlist, playlist =>playlist.units)
-	playlists: Playlist[];
+//@TODO FIX IT
+	// @ApiProperty({
+	// 	description: "Playlists which contain current content/src"
+	// })
+	// @ManyToMany(() => ContentToPlaylist, playlist =>playlist.content)
+	// playlists: ContentToPlaylist;
 }
