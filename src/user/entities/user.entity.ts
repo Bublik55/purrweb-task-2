@@ -1,12 +1,20 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEAN, IsString, IsUUID } from "class-validator";
+import { IsEmail, IsString, IsUUID } from "class-validator";
 import { randomUUID } from "crypto";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Event } from "src/event/entities/event.entity";
+import { CreateUserDto } from "../dto/create-user.dto";
+import { InjectRepository } from "@nestjs/typeorm";
 
 
 @Entity()
 export class User {
+    constructor(dto: CreateUserDto) {
+        this.id = String(randomUUID);
+        this.name = dto.name;
+        this.email = dto.email;
+        this.password = dto.password;
+    }
 
     @ApiProperty({
         example: randomUUID,
@@ -36,7 +44,7 @@ export class User {
         example: " Awesome@some.me",
         type: String
     })
-    @IsEAN()
+    @IsEmail()
     @Column('text') email: string;
 
     @ApiProperty({
