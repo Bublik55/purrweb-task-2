@@ -1,6 +1,7 @@
 import { Content } from 'src/content/entities/content.entity';
 import { Display } from 'src/display/entities/display.entity';
 import { Entity, ManyToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { PlaylistUnit } from './playlist.unit.entity';
 
 @Entity()
 export class Playlist {
@@ -9,6 +10,6 @@ export class Playlist {
   @OneToOne(() => Display, (display) => display.playlist)
   display: Display;
 
-  @ManyToMany(() => Content, (content) => content.playlists)
-  content: Map<number,Content>;
+  @ManyToMany(() => PlaylistUnit, (units) => units.playlist)
+  units: PlaylistUnit[];
 }

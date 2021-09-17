@@ -40,6 +40,6 @@ export class Content {
 	@ApiProperty({
 		description: "Playlists which contain current content/src"
 	})
-	@ManyToMany(() => Playlist, playlist =>playlist.content)
+	@ManyToMany(() => Playlist, playlist =>playlist.units)
 	playlists: Playlist[];
 }
