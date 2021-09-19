@@ -25,7 +25,7 @@ export class Event {
     example: User,
     type: User,
   })
-  @ManyToOne(() => User, (user) => user.events)
+  @ManyToOne(() => User, (user) => user.events, { onDelete: "CASCADE" })
   user: User;
 
   @ApiProperty({

@@ -7,10 +7,14 @@ import { Playlist } from "./playlist.entity";
 export class ContentToPlaylist {
   @PrimaryGeneratedColumn("uuid") id: string;
 
-  @ManyToOne(() => Playlist, (playlist) => playlist.contentToPlaylist)
+  @ManyToOne(() => Playlist, (playlist) => playlist.contentToPlaylist, {
+    onDelete: "CASCADE",
+  })
   playlist: Playlist;
 
-  @ManyToOne(() => Content, (content) => content.contentToPlaylist)
+  @ManyToOne(() => Content, (content) => content.contentToPlaylist, {
+    onDelete: "CASCADE",
+  })
   content: Content;
 
   @IsNumber()

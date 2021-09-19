@@ -12,7 +12,9 @@ import { ContentToPlaylist } from "./content-to-playlist.entity";
 export class Playlist {
   @PrimaryGeneratedColumn("uuid") id: string;
 
-  @OneToOne(() => Display, (display) => display.playlist)
+  @OneToOne(() => Display, (display) => display.playlist, {
+    onDelete: "CASCADE",
+  })
   display: Display;
 
   @OneToMany(

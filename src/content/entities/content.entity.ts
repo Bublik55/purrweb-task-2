@@ -35,7 +35,7 @@ export class Content {
     example: "RANDOMURL",
   })
   @IsString()
-  @Column("text")
+  @Column("text", { unique: true })
   url: string;
 
   @OneToMany(

@@ -20,26 +20,26 @@ export class User {
     type: String,
   })
   @IsString()
-  @Column("text")
+  @Column("text", { unique: true })
   name: string;
 
   @ApiProperty({
     description: "HASHED User's password",
-    example: "Awesomepasswd",
+    example: "Awesomepasswd_hash",
     type: String,
   })
   @IsString()
   @Column("text")
-  password;
+  password: string;
 
   @ApiProperty({
     description: "User's email",
-    example: " Awesome@some.me",
+    example: "Awesome@some.me",
     type: String,
   })
   @IsEmail()
-  @Column("text")
-  email;
+  @Column("text", { unique: true })
+  email: string;
 
   @ApiProperty({
     description: "User's events",

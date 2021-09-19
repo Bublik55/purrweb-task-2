@@ -1,13 +1,12 @@
+import { Event } from "src/event/entities/event.entity";
+import { Playlist } from "src/playlist/entities/playlist.entity";
 import {
   Entity,
   JoinColumn,
-  JoinTable,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Event } from "src/event/entities/event.entity";
-import { Playlist } from "src/playlist/entities/playlist.entity";
 
 @Entity()
 export class Display {
@@ -19,6 +18,8 @@ export class Display {
   @JoinColumn()
   playlist: Playlist;
 
-  @ManyToOne(() => Event, (event) => event.displays)
+  @ManyToOne(() => Event, (event) => event.displays, {
+    onDelete: "CASCADE",
+  })
   event: Event;
 }
