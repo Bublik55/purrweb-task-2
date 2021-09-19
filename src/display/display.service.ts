@@ -1,11 +1,22 @@
-import { Injectable } from '@nestjs/common';
-import { CreateDisplayDto } from './dto/create-display.dto';
-import { UpdateDisplayDto } from './dto/update-display.dto';
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Event } from "src/event/entities/event.entity";
+import { Repository } from "typeorm";
+import { CreateDisplayDto } from "./dto/create-display.dto";
+import { UpdateDisplayDto } from "./dto/update-display.dto";
+import { Display } from "./entities/display.entity";
 
 @Injectable()
 export class DisplayService {
+  constructor(
+    @InjectRepository(Display)
+    private displayRepository: Repository<Display>,
+    @InjectRepository(Event)
+    private eventRepository: Repository<Event>
+  ) {}
+
   create(createDisplayDto: CreateDisplayDto) {
-    return 'This action adds a new display';
+    return "This action adds a new display";
   }
 
   findAll() {
