@@ -23,6 +23,7 @@ export class UserService {
     user.password = createUserDto.password;
     try {
       await this.userRepository.save(user);
+      console.log(user.events);
       return user;
     } catch (error) {
       throw new BadRequestException("Email or Login already exists");

@@ -1,7 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsString, IsUUID } from "class-validator";
+import { IsEmail, IsNumberString, IsString } from "class-validator";
 import { randomUUID } from "crypto";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinTable,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Event } from "src/event/entities/event.entity";
 
 @Entity()
@@ -10,8 +16,8 @@ export class User {
     example: randomUUID,
     type: String,
   })
-  @IsUUID()
-  @PrimaryGeneratedColumn("uuid")
+  @IsNumberString()
+  @PrimaryGeneratedColumn()
   id: string;
 
   @ApiProperty({
@@ -30,7 +36,7 @@ export class User {
   })
   @IsString()
   @Column("text")
-  password: string;
+  password!: string;
 
   @ApiProperty({
     description: "User's email",
@@ -39,13 +45,14 @@ export class User {
   })
   @IsEmail()
   @Column("text", { unique: true })
-  email: string;
+  email!: string;
 
   @ApiProperty({
     description: "User's events",
     example: Event,
     type: [Event],
   })
-  @OneToMany(() => Event, (events) => events.user)
+  @OneToMany(() => Event, (event) => event.user, { lazy: true })
+  @JoinTable()
   events: Event[];
 }

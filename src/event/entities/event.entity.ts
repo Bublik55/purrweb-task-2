@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { IsNumberString } from "class-validator";
 import { randomUUID } from "crypto";
 import { Display } from "src/display/entities/display.entity";
 import { User } from "src/user/entities/user.entity";
@@ -17,7 +18,8 @@ export class Event {
     example: randomUUID,
     type: String,
   })
-  @PrimaryGeneratedColumn("uuid")
+  @IsNumberString()
+  @PrimaryGeneratedColumn()
   id: string;
 
   @ApiProperty({
@@ -25,11 +27,12 @@ export class Event {
     example: User,
     type: User,
   })
-  @ManyToOne(() => User, (user) => user.events, {
+  @ManyToOne(() => User, {
     onDelete: "CASCADE",
     lazy: true,
   })
-  user: User;
+  @JoinTable()
+  user: Promise<User>;
 
   @ApiProperty({
     description: "Event`s displays",

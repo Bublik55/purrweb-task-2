@@ -1,33 +1,39 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  ParseUUIDPipe,
+  Patch,
+  Post,
 } from "@nestjs/common";
-import { EventService } from "./event.service";
+import { ApiTags } from "@nestjs/swagger";
 import { CreateEventDto } from "./dto/create-event.dto";
 import { UpdateEventDto } from "./dto/update-event.dto";
-import { ApiTags } from "@nestjs/swagger";
-
+import { EventService } from "./event.service";
+@ApiTags("Events")
 @Controller("users/:userId/events")
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
   @Post()
-  create(@Body() createEventDto: CreateEventDto) {
+  create(
+    @Param("userId", ParseIntPipe) userid: string,
+    @Body() createEventDto: CreateEventDto
+  ) {
+    createEventDto.user = userid;
     return this.eventService.create(createEventDto);
   }
 
   @Get()
-  findAll() {
-    return this.eventService.findAll();
+  findAll(@Param("userId", ParseIntPipe) authorId: string) {
+    return this.eventService.findAll(authorId);
   }
 
   @Get(":id")
-  findOne(@Param("id") id: string) {
+  findOne(@Param("id", ParseIntPipe) id: string) {
     return this.eventService.findOne(+id);
   }
 
