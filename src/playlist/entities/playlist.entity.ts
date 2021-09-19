@@ -1,16 +1,27 @@
-import { Content } from "src/content/entities/content.entity";
 import { Display } from "src/display/entities/display.entity";
-import { Entity, ManyToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Entity,
+  JoinTable,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { ContentToPlaylist } from "./content-to-playlist.entity";
 
 @Entity()
 export class Playlist {
+  @PrimaryGeneratedColumn("uuid") id: string;
 
-	@PrimaryGeneratedColumn('uuid') id: string;
+  @OneToOne(() => Display, (display) => display.playlist)
+  display: Display;
 
-	@OneToOne(() => Display, display => display.playlist)
-	display: Display;
-
-	@ManyToMany(() => Content, content => content.playlists)
-	content: Content;
-
+  @OneToMany(
+    () => ContentToPlaylist,
+    (contentToPlaylist) => contentToPlaylist.playlist,
+    {
+      eager: true,
+    }
+  )
+  @JoinTable()
+  contentToPlaylist: ContentToPlaylist[];
 }

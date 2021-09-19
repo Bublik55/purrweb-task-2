@@ -1,7 +1,7 @@
-# compiled output
+# compiled output modules, local data
 /dist
 /node_modules
-
+/data
 # Logs
 logs
 *.log

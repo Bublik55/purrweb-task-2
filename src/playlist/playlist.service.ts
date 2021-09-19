@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { CreatePlaylistDto } from './dto/create-playlist.dto';
-import { UpdatePlaylistDto } from './dto/update-playlist.dto';
+import { Injectable } from "@nestjs/common";
+import { CreatePlaylistDto } from "./dto/create-playlist.dto";
+import { UpdatePlaylistDto } from "./dto/update-playlist.dto";
 
 @Injectable()
 export class PlaylistService {
   create(createPlaylistDto: CreatePlaylistDto) {
-    return 'This action adds a new playlist';
+    return "This action adds a new playlist";
   }
 
   findAll() {
