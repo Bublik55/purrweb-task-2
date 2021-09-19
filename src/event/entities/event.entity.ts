@@ -25,7 +25,10 @@ export class Event {
     example: User,
     type: User,
   })
-  @ManyToOne(() => User, (user) => user.events, { onDelete: "CASCADE" })
+  @ManyToOne(() => User, (user) => user.events, {
+    onDelete: "CASCADE",
+    lazy: true,
+  })
   user: User;
 
   @ApiProperty({
@@ -34,7 +37,7 @@ export class Event {
     type: Display,
   })
   @OneToMany(() => Display, (displays) => displays.event, {
-    eager: true,
+    lazy: true,
   })
   @JoinTable()
   displays: Display[];

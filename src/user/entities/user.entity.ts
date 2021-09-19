@@ -44,7 +44,7 @@ export class User {
   @ApiProperty({
     description: "User's events",
     example: Event,
-    type: Event,
+    type: [Event],
   })
   @OneToMany(() => Event, (events) => events.user)
   events: Event[];
