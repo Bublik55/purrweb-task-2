@@ -1,24 +1,30 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
+import { User } from "./entities/user.entity";
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>,
-  ) { }
+    private userRepository: Repository<User>
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
-    let user = new User();
+    const user = new User();
+    user.email = createUserDto.email;
+    user.name = createUserDto.name;
+    user.password = createUserDto.password;
     if (await this.userRepository.save(user)) {
-      return (user);
-    }
-    else {
-      throw new BadRequestException('Email or Login already exists')
+      return user;
+    } else {
+      throw new BadRequestException("Email or Login already exists");
     }
   }
 
@@ -27,20 +33,15 @@ export class UserService {
   }
 
   async findOneByName(name: string) {
-    let user: User =await this.userRepository.findOne({name: name});
-    if (user)
-      return user;
-    else 
-      throw new NotFoundException(`Cannot find user with name ${name}`);
+    const user: User = await this.userRepository.findOne({ name: name });
+    if (user) return user;
+    else throw new NotFoundException(`Cannot find user with name ${name}`);
   }
 
-
   async findOne(id: number) {
-    let user = await this.userRepository.findOne(id);
-    if (user)
-      return user;
-    else 
-      throw new NotFoundException(`Cannot find user with id ${id}`);
+    const user = await this.userRepository.findOne(id);
+    if (user) return user;
+    else throw new NotFoundException(`Cannot find user with id ${id}`);
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
@@ -48,10 +49,8 @@ export class UserService {
   }
 
   async remove(id: number) {
-    let user = await this.userRepository.delete(id);
-    if (user) 
-      return true;
-    else 
-      return false;
+    const user = await this.userRepository.delete(id);
+    if (user) return true;
+    else return false;
   }
 }
