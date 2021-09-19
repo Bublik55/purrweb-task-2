@@ -1,6 +1,6 @@
 import { Content } from 'src/content/entities/content.entity';
 import { Display } from 'src/display/entities/display.entity';
-import { Entity, ManyToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { ContentToPlaylist } from './content-to-playlist.entity';
 
 @Entity()
@@ -10,6 +10,6 @@ export class Playlist {
   @OneToOne(() => Display, (display) => display.playlist)
   display: Display;
 
-  @ManyToMany(() => ContentToPlaylist, (units) => units.playlist)
-  units: ContentToPlaylist[];
+  @OneToMany(() => ContentToPlaylist, (units) => units.playlist)
+  contentToPlaylist: ContentToPlaylist[];
 }

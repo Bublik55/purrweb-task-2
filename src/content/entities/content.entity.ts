@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsString } from "class-validator";
 import { Playlist } from "src/playlist/entities/playlist.entity";
 import { ContentToPlaylist } from "src/playlist/entities/content-to-playlist.entity";
-import { Column, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 export enum CONTENT_TYPE {
 	PICTURE,
@@ -11,6 +11,7 @@ export enum CONTENT_TYPE {
 	AUDIO,
 }
 
+@Entity()
 export class Content {
 
 	@PrimaryGeneratedColumn('uuid')id: string;
@@ -37,10 +38,9 @@ export class Content {
 	@IsString()
 	@Column('text') url: string;
 
-//@TODO FIX IT
-	// @ApiProperty({
-	// 	description: "Playlists which contain current content/src"
-	// })
-	// @ManyToMany(() => ContentToPlaylist, playlist =>playlist.content)
-	// playlists: ContentToPlaylist;
+	@ApiProperty({
+		description: "Playlists which contain current content/src"
+	})
+	@OneToMany(() => ContentToPlaylist, contentToPlaylist =>contentToPlaylist.content)
+	contentToPlaylist: ContentToPlaylist[];
 }

@@ -8,8 +8,12 @@ import { Playlist } from './playlist.entity';
 export class ContentToPlaylist {
   @PrimaryGeneratedColumn('uuid') id: string;
 
-	@ManyToMany(()=> Playlist, playlist => playlist.units)
+	@ManyToMany(()=> Playlist, playlist => playlist.contentToPlaylist)
 	playlist: Playlist;
+
+  @ManyToOne(() => Content, content => content.contentToPlaylist)
+  content: Content;
+
 
   @OneToOne(() => Display, (display) => display.playlist)
   display: Display;
@@ -18,6 +22,7 @@ export class ContentToPlaylist {
   @Column()
 	order: number;
 
-  @ManyToOne(() => Content)
-  contents: Content;
+
+
+
 }
