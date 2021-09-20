@@ -18,7 +18,7 @@ export class DisplayService {
   async create(createDisplayDto: CreateDisplayDto) {
     const event = await this.eventRepository.findOne(createDisplayDto.event);
     const display = new Display();
-    display.event = event;
+    display.event = Promise.resolve(event);
     return await this.displayRepository.save(display);
   }
 

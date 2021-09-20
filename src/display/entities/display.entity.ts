@@ -19,9 +19,8 @@ export class Display {
   playlist: Playlist;
 
   @ManyToOne(() => Event, (event) => event.displays, {
-    onDelete: "CASCADE",
-    cascade: true,
-    eager: true,
+    lazy: true,
   })
-  event: Event;
+  @JoinColumn()
+  event: Promise<Event>;
 }

@@ -80,6 +80,7 @@ export class EventController {
   })
   @Patch(":id")
   update(@Param("id") id: string, @Body() updateEventDto: UpdateEventDto) {
+    
     return this.eventService.update(+id, updateEventDto);
   }
 

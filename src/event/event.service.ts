@@ -4,8 +4,10 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { DisplayService } from "src/display/display.service";
+import { Display } from "src/display/entities/display.entity";
 import { User } from "src/user/entities/user.entity";
-import { Repository } from "typeorm";
+import { AfterInsert, Repository } from "typeorm";
 import { CreateEventDto } from "./dto/create-event.dto";
 import { UpdateEventDto } from "./dto/update-event.dto";
 import { Event } from "./entities/event.entity";
@@ -16,8 +18,10 @@ export class EventService {
     @InjectRepository(Event)
     private eventRepository: Repository<Event>,
     @InjectRepository(User)
-    private userRepository: Repository<User>
-  ) {}
+    private userRepository: Repository<User>,
+    @InjectRepository(Display)
+    private displayRepository: Repository<Display>
+  ) { }
   async create(createEventDto: CreateEventDto) {
     const event = new Event();
     const user = await this.userRepository.findOne(createEventDto.user);
@@ -42,8 +46,17 @@ export class EventService {
   }
 
   //@TODO Return after complete displays
-  update(id: number, updateEventDto: UpdateEventDto) {
-    return `This action updates a ${id} event`;
+  // Get array of displays and attach it to event
+  async update(id: number, updateEventDto: UpdateEventDto) {
+    const event = await this.eventRepository.findOne(id);
+    updateEventDto.displays.forEach( async (element) => {
+      const display = await this.displayRepository.findOne(element);
+      display.event = Promise.resolve(event);
+
+      await (this.displayRepository.save(display)).catch(err => `Can't attach display ${id} to current event`);
+    });
+    console.log(await this.eventRepository.findOne(id));
+    return  await this.eventRepository.findOne(id);
   }
 
   async remove(id: number) {

@@ -5,6 +5,7 @@ import { Display } from "src/display/entities/display.entity";
 import { User } from "src/user/entities/user.entity";
 import {
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToOne,
   OneToMany,
@@ -30,6 +31,7 @@ export class Event {
   @ManyToOne(() => User, {
     onDelete: "CASCADE",
     lazy: true,
+
   })
   @JoinTable()
   user: Promise<User>;
@@ -40,8 +42,10 @@ export class Event {
     type: Display,
   })
   @OneToMany(() => Display, (displays) => displays.event, {
-    lazy: true,
+    eager: true,
+    cascade: true,
+    onDelete: "CASCADE"
   })
-  @JoinTable()
+  @JoinColumn()
   displays: Display[];
 }
