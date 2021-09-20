@@ -52,7 +52,11 @@ export class User {
     example: Event,
     type: [Event],
   })
-  @OneToMany(() => Event, (event) => event.user, { lazy: true, cascade: true })
+  @OneToMany(() => Event, (event) => event.user, {
+    eager: true,
+    cascade: true,
+    onDelete: "CASCADE",
+  })
   @JoinTable()
   events: Event[];
 }

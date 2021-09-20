@@ -5,7 +5,7 @@ import { Playlist } from "./playlist.entity";
 
 @Entity()
 export class ContentToPlaylist {
-  @PrimaryGeneratedColumn("uuid") id: string;
+  @PrimaryGeneratedColumn() id: string;
 
   @ManyToOne(() => Playlist, (playlist) => playlist.contentToPlaylist, {
     onDelete: "CASCADE",
@@ -19,7 +19,7 @@ export class ContentToPlaylist {
 
   @IsNumber()
   @Column()
-  duration: number
+  duration: number;
   @IsNumber()
   @Column()
   order: number;

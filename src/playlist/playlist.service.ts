@@ -5,7 +5,6 @@ import { UpdatePlaylistDto } from "./dto/update-playlist.dto";
 @Injectable()
 export class PlaylistService {
   create(createPlaylistDto: CreatePlaylistDto) {
-    
     return "This action adds a new playlist";
   }
 

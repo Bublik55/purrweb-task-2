@@ -16,12 +16,19 @@ import {
 export class Event {
   @ApiProperty({
     description: "Event`s id",
-    example: randomUUID,
+    example: "98",
     type: String,
   })
   @IsNumberString()
   @PrimaryGeneratedColumn()
   id: string;
+
+  @ApiProperty({
+    description: "Title of Event",
+    example: "BEST EVENT",
+    type: String,
+  })
+  title: string;
 
   @ApiProperty({
     description: "This is event`s author",
@@ -31,7 +38,6 @@ export class Event {
   @ManyToOne(() => User, {
     onDelete: "CASCADE",
     lazy: true,
-
   })
   @JoinTable()
   user: Promise<User>;
@@ -44,7 +50,7 @@ export class Event {
   @OneToMany(() => Display, (displays) => displays.event, {
     eager: true,
     cascade: true,
-    onDelete: "CASCADE"
+    onDelete: "CASCADE",
   })
   @JoinColumn()
   displays: Display[];

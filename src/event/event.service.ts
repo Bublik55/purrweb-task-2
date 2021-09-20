@@ -4,10 +4,9 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DisplayService } from "src/display/display.service";
 import { Display } from "src/display/entities/display.entity";
 import { User } from "src/user/entities/user.entity";
-import { AfterInsert, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { CreateEventDto } from "./dto/create-event.dto";
 import { UpdateEventDto } from "./dto/update-event.dto";
 import { Event } from "./entities/event.entity";
@@ -21,7 +20,7 @@ export class EventService {
     private userRepository: Repository<User>,
     @InjectRepository(Display)
     private displayRepository: Repository<Display>
-  ) { }
+  ) {}
   async create(createEventDto: CreateEventDto) {
     const event = new Event();
     const user = await this.userRepository.findOne(createEventDto.user);
@@ -31,12 +30,10 @@ export class EventService {
   }
 
   //@Warnig QUERY FOR ALL USERS PLAYLISTS
-  //@TODO TRY TO GET USER WITH ALL HIS EVENTS -> RETURN EVENTS
   async findAll(authorId: string) {
-    return await this.eventRepository.find({
-      relations: ["user", "displays"],
-      where: `Event.user = ${authorId}`,
-    });
+    return await (
+      await this.userRepository.findOne(authorId)
+    ).events;
   }
 
   async findOne(id: number) {
@@ -45,15 +42,16 @@ export class EventService {
     else throw new NotFoundException(`Cannot find event with id ${id}`);
   }
 
-  //@TODO Return after complete displays
-  // Get array of displays and attach it to event
   async update(id: number, updateEventDto: UpdateEventDto) {
     const event = await this.eventRepository.findOne(id);
-    updateEventDto.displays.forEach( async (element) => {
+    if (updateEventDto.title) {
+      event.title = updateEventDto.title;
+    }
+    updateEventDto.displays.forEach(async (element) => {
       const display = await this.displayRepository.findOne(element);
       event.displays.push(display);
     });
-    return  await this.eventRepository.save(event);
+    return await this.eventRepository.save(event);
   }
 
   async remove(id: number) {

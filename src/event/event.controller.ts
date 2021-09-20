@@ -6,9 +6,14 @@ import {
   Param,
   ParseIntPipe,
   Patch,
-  Post
+  Post,
 } from "@nestjs/common";
-import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiOperation,
+  ApiProperty,
+  ApiResponse,
+  ApiTags,
+} from "@nestjs/swagger";
 import { CreateEventDto } from "./dto/create-event.dto";
 import { UpdateEventDto } from "./dto/update-event.dto";
 import { Event } from "./entities/event.entity";
@@ -44,7 +49,7 @@ export class EventController {
   })
   @ApiResponse({
     status: 200,
-    type:  [Event]
+    type: [Event],
   })
   @Get()
   findAll(@Param("userId", ParseIntPipe) authorId: string) {
@@ -53,7 +58,8 @@ export class EventController {
 
   @ApiOperation({
     summary: "Getevent by id",
-    description: "Get event if event exists. Return event with author and displays",
+    description:
+      "Get event if event exists. Return event with author and displays",
   })
   @ApiProperty({
     example: Event,
@@ -80,13 +86,13 @@ export class EventController {
   })
   @Patch(":id")
   update(@Param("id") id: string, @Body() updateEventDto: UpdateEventDto) {
-    
     return this.eventService.update(+id, updateEventDto);
   }
 
   @ApiOperation({
     summary: "Delete event",
-    description: "Delete event and return true. Return false when event dont exists",
+    description:
+      "Delete event and return true. Return false when event dont exists",
   })
   @ApiResponse({
     status: 200,

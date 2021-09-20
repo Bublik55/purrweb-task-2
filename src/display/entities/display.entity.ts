@@ -14,13 +14,14 @@ export class Display {
 
   @OneToOne(() => Playlist, (playlist) => playlist.display, {
     eager: true,
+    cascade: true,
   })
   @JoinColumn()
   playlist: Playlist;
 
   @ManyToOne(() => Event, (event) => event.displays, {
     lazy: true,
+    onDelete: "CASCADE",
   })
-  @JoinColumn()
   event: Promise<Event>;
 }

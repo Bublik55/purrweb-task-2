@@ -14,8 +14,6 @@ export enum CONTENT_TYPE {
 export class Content {
   @PrimaryGeneratedColumn() id: string;
 
-
-
   @ApiProperty({
     description: `Type of content`,
     type: CONTENT_TYPE,

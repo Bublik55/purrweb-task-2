@@ -6,9 +6,14 @@ import {
   Param,
   ParseIntPipe,
   Patch,
-  Post
+  Post,
 } from "@nestjs/common";
-import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiOperation,
+  ApiProperty,
+  ApiResponse,
+  ApiTags,
+} from "@nestjs/swagger";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./entities/user.entity";
@@ -16,7 +21,7 @@ import { UserService } from "./user.service";
 @ApiTags("User CRUD")
 @Controller("users")
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService) {}
 
   @ApiOperation({
     summary: "Create User",
@@ -43,7 +48,7 @@ export class UserController {
   })
   @ApiResponse({
     status: 200,
-    type: [User]
+    type: [User],
   })
   @Get()
   findAll() {
@@ -85,7 +90,8 @@ export class UserController {
 
   @ApiOperation({
     summary: "Delete user",
-    description: "Delete user and return true. Return false when user don't exists",
+    description:
+      "Delete user and return true. Return false when user don't exists",
   })
   @ApiProperty({
     example: User,

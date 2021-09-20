@@ -1,11 +1,14 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { IsNumberString } from 'class-validator';
-import { CreateDisplayDto } from './create-display.dto';
+import { PartialType } from "@nestjs/mapped-types";
+import { ApiProperty } from "@nestjs/swagger";
+import { IsNumberString } from "class-validator";
+import { CreateDisplayDto } from "./create-display.dto";
 
 export class UpdateDisplayDto extends CreateDisplayDto {
-	@IsNumberString()
-	event: string;
-
-	@IsNumberString()
-	playlist: string;
+  @ApiProperty({
+    description: "Playlist's id to attach display",
+    type: String,
+    example: "2",
+  })
+  @IsNumberString()
+  playlist: string;
 }
