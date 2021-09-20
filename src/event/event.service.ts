@@ -27,6 +27,7 @@ export class EventService {
   }
 
   //@Warnig QUERY FOR ALL USERS PLAYLISTS
+  //@TODO TRY TO GET USER WITH ALL HIS EVENTS -> RETURN EVENTS
   async findAll(authorId: string) {
     return await this.eventRepository.find({
       relations: ["user", "displays"],

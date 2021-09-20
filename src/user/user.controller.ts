@@ -6,9 +6,9 @@ import {
   Param,
   ParseIntPipe,
   Patch,
-  Post,
+  Post
 } from "@nestjs/common";
-import { ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./entities/user.entity";
@@ -16,13 +16,17 @@ import { UserService } from "./user.service";
 @ApiTags("User CRUD")
 @Controller("users")
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
-  @ApiProperty({
+  @ApiOperation({
+    summary: "Create User",
     description: "Create user",
   })
+  @ApiProperty({
+    example: User,
+  })
   @ApiResponse({
-    status: 200,
+    status: 201,
     type: User,
   })
   @Post()
@@ -30,16 +34,47 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
+  @ApiOperation({
+    summary: "Get Users",
+    description: "Get all users with events",
+  })
+  @ApiProperty({
+    example: [User],
+  })
+  @ApiResponse({
+    status: 200,
+    type: [User]
+  })
   @Get()
   findAll() {
     return this.userService.findAll();
   }
 
+  @ApiOperation({
+    summary: "Get User",
+    description: "Get user by id",
+  })
+  @ApiProperty({ example: User })
+  @ApiResponse({
+    status: 200,
+    type: User,
+  })
   @Get(":id")
   findOne(@Param("id", ParseIntPipe) id: string) {
     return this.userService.findOne(id);
   }
 
+  @ApiOperation({
+    summary: "Update user",
+    description: "Update user if user exists",
+  })
+  @ApiProperty({
+    example: User,
+  })
+  @ApiResponse({
+    status: 200,
+    type: User,
+  })
   @Patch(":id")
   update(
     @Param("id", ParseIntPipe) id: string,
@@ -48,6 +83,17 @@ export class UserController {
     return this.userService.update(id, updateUserDto);
   }
 
+  @ApiOperation({
+    summary: "Delete user",
+    description: "Delete user and return true. Return false when user don't exists",
+  })
+  @ApiProperty({
+    example: User,
+  })
+  @ApiResponse({
+    status: 200,
+    type: Boolean,
+  })
   @Delete(":id")
   remove(@Param("id", ParseIntPipe) id: string) {
     return this.userService.remove(id);
