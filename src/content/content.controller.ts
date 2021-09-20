@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { ContentService } from './content.service';
 import { CreateContentDto } from './dto/create-content.dto';
 import { UpdateContentDto } from './dto/update-content.dto';
 
+@ApiTags("Content crud")
 @Controller('content')
 export class ContentController {
   constructor(private readonly contentService: ContentService) {}
@@ -28,7 +30,7 @@ export class ContentController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.contentService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: string) {
+    return this.contentService.remove(id);
   }
 }

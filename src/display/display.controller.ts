@@ -11,18 +11,19 @@ import { DisplayService } from "./display.service";
 import { CreateDisplayDto } from "./dto/create-display.dto";
 import { UpdateDisplayDto } from "./dto/update-display.dto";
 
-@Controller("display")
+@Controller("events/:eventid/display")
 export class DisplayController {
-  constructor(private readonly displayService: DisplayService) {}
+  constructor(private readonly displayService: DisplayService) { }
 
   @Post()
-  create(@Body() createDisplayDto: CreateDisplayDto) {
+  create(@Param("eventid") eventId: string, @Body() createDisplayDto: CreateDisplayDto) {
+    createDisplayDto.event = eventId;
     return this.displayService.create(createDisplayDto);
   }
 
   @Get()
-  findAll() {
-    return this.displayService.findAll();
+  findAll(@Param("eventid") eventId: string) {
+    return this.displayService.findAll(eventId);
   }
 
   @Get(":id")

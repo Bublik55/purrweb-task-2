@@ -13,14 +13,19 @@ export class DisplayService {
     private displayRepository: Repository<Display>,
     @InjectRepository(Event)
     private eventRepository: Repository<Event>
-  ) {}
+  ) { }
 
-  create(createDisplayDto: CreateDisplayDto) {
-    return "This action adds a new display";
+  async create(createDisplayDto: CreateDisplayDto) {
+    const event = await this.eventRepository.findOne(createDisplayDto.event);
+    const display = new Display();
+    display.event = event;
+    return await this.displayRepository.save(display);
   }
 
-  findAll() {
-    return `This action returns all display`;
+
+  //Return all displays of event
+  async findAll(eventId: string) {
+    return await this.displayRepository.find({ relations: ["event"], where: `Display.event = ${eventId}` });
   }
 
   findOne(id: number) {
@@ -31,7 +36,8 @@ export class DisplayService {
     return `This action updates a #${id} display`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} display`;
-  }
+  async remove(id: number) {
+    const res = await this.displayRepository.delete(id);
+    if (res.affected) return true;
+    else return false;  }
 }

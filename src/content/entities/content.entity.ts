@@ -4,29 +4,24 @@ import { ContentToPlaylist } from "src/playlist/entities/content-to-playlist.ent
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 export enum CONTENT_TYPE {
-  PICTURE,
-  HTML,
-  VIDEO,
-  AUDIO,
+  PICTURE = "PICTURE",
+  HTML = "HTML",
+  VIDEO = "VIDEO",
+  AUDIO = "AUDIO",
 }
 
 @Entity()
 export class Content {
-  @PrimaryGeneratedColumn("uuid") id: string;
+  @PrimaryGeneratedColumn() id: string;
 
-  @ApiProperty({
-    description: "Order in playlist",
-    type: Number,
-    example: 1,
-  })
-  order: number;
+
 
   @ApiProperty({
     description: `Type of content`,
     type: CONTENT_TYPE,
     example: CONTENT_TYPE.PICTURE,
   })
-  @Column("text")
+  @Column("enum", { enum: CONTENT_TYPE })
   contentType: CONTENT_TYPE;
 
   @ApiProperty({
@@ -40,7 +35,8 @@ export class Content {
 
   @OneToMany(
     () => ContentToPlaylist,
-    (contentToPlaylist) => contentToPlaylist.content
+    (contentToPlaylist) => contentToPlaylist.content,
+    { cascade: true }
   )
   contentToPlaylist: ContentToPlaylist[];
 }

@@ -22,7 +22,6 @@ import { User } from 'src/user/entities/user.entity';
     AuthService,
     JwtStrategy,
     UserOwnerGuard,
-
   ],
   controllers: [AuthController],
 })

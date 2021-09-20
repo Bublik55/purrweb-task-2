@@ -10,7 +10,7 @@ import {
 
 @Entity()
 export class Display {
-  @PrimaryGeneratedColumn("uuid") id: string;
+  @PrimaryGeneratedColumn() id: string;
 
   @OneToOne(() => Playlist, (playlist) => playlist.display, {
     eager: true,
@@ -20,6 +20,8 @@ export class Display {
 
   @ManyToOne(() => Event, (event) => event.displays, {
     onDelete: "CASCADE",
+    cascade: true,
+    eager: true,
   })
   event: Event;
 }

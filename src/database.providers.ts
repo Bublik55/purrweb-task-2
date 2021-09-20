@@ -12,15 +12,13 @@ import { UserModule } from './user/user.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost', 
+      host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password:  'postgres',
-      database:  'postgres',
-			entities: [User ,Playlist, Event, ContentToPlaylist, Content, Display],
+      password: 'postgres',
+      database: 'postgres',
+      entities: [User, Playlist, Event, ContentToPlaylist, Content, Display],
       synchronize: true,
-    }),
-    UserModule
-  ],
+    })],
 })
-export class DataBaseModule {}
+export class DataBaseModule { }

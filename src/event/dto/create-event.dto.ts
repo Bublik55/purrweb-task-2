@@ -5,7 +5,7 @@ export class CreateEventDto {
   @ApiProperty({
     description: "Owner/author id",
     type: String,
-    example: randomUUID,
+    example: '1',
   })
   user: string;
 }

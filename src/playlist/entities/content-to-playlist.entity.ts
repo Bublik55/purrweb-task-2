@@ -19,5 +19,8 @@ export class ContentToPlaylist {
 
   @IsNumber()
   @Column()
+  duration: number
+  @IsNumber()
+  @Column()
   order: number;
 }

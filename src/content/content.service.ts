@@ -1,26 +1,46 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateContentDto } from './dto/create-content.dto';
 import { UpdateContentDto } from './dto/update-content.dto';
+import { Content, CONTENT_TYPE } from './entities/content.entity';
 
 @Injectable()
 export class ContentService {
-  create(createContentDto: CreateContentDto) {
-    return 'This action adds a new content';
+
+  constructor(
+    @InjectRepository(Content)
+    private contentRepository: Repository<Content>
+  ) { }
+
+  async create(createContentDto: CreateContentDto) {
+    const content = new Content();
+    try {
+      content.contentType = CONTENT_TYPE[(createContentDto.contentType.toUpperCase())];
+      content.url = createContentDto.url;
+      return await this.contentRepository.save(content);
+    } catch (error) {
+      throw new BadRequestException();
+    }
   }
 
-  findAll() {
-    return `This action returns all content`;
+  async findAll() {
+    return await this.contentRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} content`;
+  async findOne(id: number) {
+    const res = await this.contentRepository.findOne(id);
+    if (res) return res;
+    else throw new NotFoundException(`Content with id = ${id} does not exists`)
   }
 
   update(id: number, updateContentDto: UpdateContentDto) {
     return `This action updates a #${id} content`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} content`;
+  async remove(id: string) {
+    const user = await this.contentRepository.delete(id);
+    if (user.affected) return true;
+    else return false;
   }
 }
