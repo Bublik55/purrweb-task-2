@@ -51,12 +51,9 @@ export class EventService {
     const event = await this.eventRepository.findOne(id);
     updateEventDto.displays.forEach( async (element) => {
       const display = await this.displayRepository.findOne(element);
-      display.event = Promise.resolve(event);
-
-      await (this.displayRepository.save(display)).catch(err => `Can't attach display ${id} to current event`);
+      event.displays.push(display);
     });
-    console.log(await this.eventRepository.findOne(id));
-    return  await this.eventRepository.findOne(id);
+    return  await this.eventRepository.save(event);
   }
 
   async remove(id: number) {
