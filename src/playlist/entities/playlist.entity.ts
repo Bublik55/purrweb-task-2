@@ -2,7 +2,6 @@ import { Display } from "src/display/entities/display.entity";
 import {
   Entity,
   JoinColumn,
-  JoinTable,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,

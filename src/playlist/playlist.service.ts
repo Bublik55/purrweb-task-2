@@ -22,7 +22,8 @@ export class PlaylistService {
   ) {}
 
   async create(createPlaylistDto: CreatePlaylistDto) {
-    const playlist = await new Playlist();
+    let playlist = await new Playlist();
+    playlist = await this.playlistRepository.save(playlist);
     playlist.display = await this.displayRepository.findOne(
       +createPlaylistDto.displayId
     );
@@ -34,6 +35,8 @@ export class PlaylistService {
       contentToPlaylist.content = await this.contentRepository.findOne(
         element.contentID
       );
+      contentToPlaylist.contentId = element.contentID;
+      contentToPlaylist.playlistId = playlist.id;
       const resolved = await this.contentToPlayListRepository.save(
         contentToPlaylist
       );
@@ -61,7 +64,7 @@ export class PlaylistService {
   }
 
   update(id: number, updatePlaylistDto: UpdatePlaylistDto) {
-    return `This action updates a #${id} playlist`;
+    return updatePlaylistDto;
   }
 
   remove(id: number) {
