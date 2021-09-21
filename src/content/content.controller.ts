@@ -8,11 +8,12 @@ import {
   Delete,
   ParseIntPipe,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { ContentService } from "./content.service";
 import { CreateContentDto } from "./dto/create-content.dto";
 import { UpdateContentDto } from "./dto/update-content.dto";
 
+@ApiBearerAuth()
 @ApiTags("Content crud")
 @Controller("content")
 export class ContentController {

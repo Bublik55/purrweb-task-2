@@ -1,4 +1,4 @@
-import { IsNumber } from "class-validator";
+import { IsNumber, IsNumberString } from "class-validator";
 import { Content } from "src/content/entities/content.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Playlist } from "./playlist.entity";
@@ -8,19 +8,18 @@ export class ContentToPlaylist {
   @PrimaryGeneratedColumn() id: string;
 
   @ManyToOne(() => Playlist, (playlist) => playlist.contentToPlaylist, {
-    onDelete: "CASCADE",
+    cascade: ["insert", "update"],
+    lazy: true,
   })
-  playlist: Playlist;
+  playlist: Promise<Playlist>;
 
-  @ManyToOne(() => Content, (content) => content.contentToPlaylist, {
-    onDelete: "CASCADE",
-  })
+  @ManyToOne(() => Content, (content) => content.contentToPlaylist)
   content: Content;
 
-  @IsNumber()
+  @IsNumberString()
   @Column()
-  duration: number;
-  @IsNumber()
+  duration: string;
+  @IsNumberString()
   @Column()
-  order: number;
+  order: string;
 }

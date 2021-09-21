@@ -23,13 +23,14 @@ export class EventService {
   ) {}
   async create(createEventDto: CreateEventDto) {
     const event = new Event();
-    const user = await this.userRepository.findOne(createEventDto.user);
+    ///
+    const user = this.userRepository.findOne(createEventDto.user);
     event.user = Promise.resolve(user);
     if (user) return this.eventRepository.save(event);
     else throw new BadRequestException();
   }
 
-  //@Warnig QUERY FOR ALL USERS PLAYLISTS
+  //@Warnig QUERY FOR ALL USER'S PLAYLISTS
   async findAll(authorId: string) {
     return await (
       await this.userRepository.findOne(authorId)

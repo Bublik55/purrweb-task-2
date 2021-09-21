@@ -1,6 +1,7 @@
 import { Display } from "src/display/entities/display.entity";
 import {
   Entity,
+  JoinColumn,
   JoinTable,
   OneToMany,
   OneToOne,
@@ -10,7 +11,7 @@ import { ContentToPlaylist } from "./content-to-playlist.entity";
 
 @Entity()
 export class Playlist {
-  @PrimaryGeneratedColumn("uuid") id: string;
+  @PrimaryGeneratedColumn() id: string;
 
   @OneToOne(() => Display, (display) => display.playlist, {
     onDelete: "CASCADE",
@@ -22,8 +23,10 @@ export class Playlist {
     (contentToPlaylist) => contentToPlaylist.playlist,
     {
       eager: true,
+      cascade: true,
+      onDelete: "CASCADE",
     }
   )
-  @JoinTable()
+  @JoinColumn()
   contentToPlaylist: ContentToPlaylist[];
 }

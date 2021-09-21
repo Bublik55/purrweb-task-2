@@ -9,6 +9,7 @@ import {
   Post,
 } from "@nestjs/common";
 import {
+  ApiBearerAuth,
   ApiOperation,
   ApiProperty,
   ApiResponse,
@@ -18,6 +19,7 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./entities/user.entity";
 import { UserService } from "./user.service";
+@ApiBearerAuth()
 @ApiTags("User CRUD")
 @Controller("users")
 export class UserController {

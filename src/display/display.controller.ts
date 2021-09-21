@@ -7,10 +7,11 @@ import {
   Param,
   Delete,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { DisplayService } from "./display.service";
 import { CreateDisplayDto } from "./dto/create-display.dto";
 import { UpdateDisplayDto } from "./dto/update-display.dto";
+@ApiBearerAuth()
 @ApiTags("Display")
 @Controller("events/:eventid/display")
 export class DisplayController {

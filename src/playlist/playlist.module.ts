@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { Content } from "src/content/entities/content.entity";
 import { DisplayModule } from "src/display/display.module";
 import { Display } from "src/display/entities/display.entity";
 import { ContentToPlaylist } from "./entities/content-to-playlist.entity";
@@ -9,7 +10,7 @@ import { PlaylistService } from "./playlist.service";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Display, Playlist, ContentToPlaylist]),
+    TypeOrmModule.forFeature([Display, Playlist, ContentToPlaylist, Content]),
     DisplayModule,
   ],
   controllers: [PlaylistController],

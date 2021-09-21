@@ -9,6 +9,7 @@ import {
   Post,
 } from "@nestjs/common";
 import {
+  ApiBearerAuth,
   ApiOperation,
   ApiProperty,
   ApiResponse,
@@ -18,6 +19,7 @@ import { CreateEventDto } from "./dto/create-event.dto";
 import { UpdateEventDto } from "./dto/update-event.dto";
 import { Event } from "./entities/event.entity";
 import { EventService } from "./event.service";
+@ApiBearerAuth()
 @ApiTags("Events")
 @Controller("users/:userId/events")
 export class EventController {
