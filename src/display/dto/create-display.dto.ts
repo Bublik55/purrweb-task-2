@@ -1,5 +1,4 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Event } from "src/event/entities/event.entity";
 
 export class CreateDisplayDto {
   @ApiProperty({

@@ -1,6 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNumberString } from "class-validator";
-import { randomUUID } from "crypto";
 import { Display } from "src/display/entities/display.entity";
 import { User } from "src/user/entities/user.entity";
 import {

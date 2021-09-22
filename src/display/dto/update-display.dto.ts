@@ -1,4 +1,3 @@
-import { PartialType } from "@nestjs/mapped-types";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNumberString } from "class-validator";
 import { CreateDisplayDto } from "./create-display.dto";

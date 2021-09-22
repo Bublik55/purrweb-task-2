@@ -1,5 +1,4 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { randomUUID } from "crypto";
 
 export class CreateEventDto {
   @ApiProperty({

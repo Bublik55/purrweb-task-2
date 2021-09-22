@@ -1,29 +1,24 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  ParseIntPipe,
+  Get,
+  Param,
+  Patch,
+  Post,
 } from "@nestjs/common";
-import { PlaylistService } from "./playlist.service";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { CreatePlaylistDto } from "./dto/create-playlist.dto";
 import { UpdatePlaylistDto } from "./dto/update-playlist.dto";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { PlaylistService } from "./playlist.service";
 @ApiBearerAuth()
 @ApiTags("Playlist oper")
-@Controller("displays/:displayid/playlist")
+@Controller("playlists/")
 export class PlaylistController {
   constructor(private readonly playlistService: PlaylistService) {}
 
   @Post()
-  create(
-    @Param("displayid", ParseIntPipe) diaplayId: string,
-    @Body() createPlaylistDto: CreatePlaylistDto
-  ) {
-    createPlaylistDto.displayId = diaplayId;
+  create(@Body() createPlaylistDto: CreatePlaylistDto) {
     return this.playlistService.create(createPlaylistDto);
   }
 

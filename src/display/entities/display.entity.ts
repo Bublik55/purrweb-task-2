@@ -15,13 +15,14 @@ export class Display {
   @OneToOne(() => Playlist, (playlist) => playlist.display, {
     eager: true,
     cascade: true,
+    onDelete: "SET NULL",
   })
   @JoinColumn()
   playlist: Playlist;
 
   @ManyToOne(() => Event, (event) => event.displays, {
     lazy: true,
-    onDelete: "CASCADE",
+    onDelete: "SET NULL",
   })
   event: Promise<Event>;
 }

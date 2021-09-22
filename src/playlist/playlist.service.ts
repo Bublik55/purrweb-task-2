@@ -77,13 +77,6 @@ export class PlaylistService {
     return this.playlistRepository.findOne(id);
   }
 
-  findOneByDisplay(displayid: number) {
-    return this.playlistRepository.findOne({
-      relations: ["contentToPlaylist", "content"],
-      where: `Playlist.display = ${displayid}`,
-    });
-  }
-
   update(id: number, updatePlaylistDto: UpdatePlaylistDto) {
     return updatePlaylistDto;
   }

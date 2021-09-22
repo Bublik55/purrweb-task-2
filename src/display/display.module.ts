@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Event } from "src/event/entities/event.entity";
-import { EventModule } from "src/event/event.module";
 import { Playlist } from "src/playlist/entities/playlist.entity";
 import { DisplayController } from "./display.controller";
 import { DisplayService } from "./display.service";

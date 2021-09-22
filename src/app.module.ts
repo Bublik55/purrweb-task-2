@@ -7,7 +7,6 @@ import { ContentModule } from "./content/content.module";
 import { DataBaseModule } from "./database.providers";
 import { DisplayModule } from "./display/display.module";
 import { EventModule } from "./event/event.module";
-import { Playlist } from "./playlist/entities/playlist.entity";
 import { PlaylistModule } from "./playlist/playlist.module";
 import { UserModule } from "./user/user.module";
 import { AuthModule } from "./utils/auth/auth.module";
