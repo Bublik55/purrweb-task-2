@@ -8,19 +8,23 @@ export class ContentToPlaylist {
   @PrimaryGeneratedColumn() id: string;
 
   @Column()
+  @IsNumberString()
   playlistId: string;
 
   @Column()
+  @IsNumberString()
   contentId: string;
 
   @ManyToOne(() => Playlist, (playlist) => playlist.contentToPlaylist)
   playlist: Promise<Playlist>;
 
-  @ManyToOne(() => Content, (content) => content.contentToPlaylist)
+  @ManyToOne(() => Content, (content) => content.contentToPlaylist, {
+    eager: true,
+  })
   content: Content;
 
   @IsNumberString()
-  @Column()
+  @Column("real")
   duration: string;
   @IsNumberString()
   @Column()

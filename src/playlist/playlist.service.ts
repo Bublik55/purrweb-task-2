@@ -1,4 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Content } from "src/content/entities/content.entity";
 import { Display } from "src/display/entities/display.entity";
@@ -7,6 +11,7 @@ import { CreatePlaylistDto } from "./dto/create-playlist.dto";
 import { UpdatePlaylistDto } from "./dto/update-playlist.dto";
 import { ContentToPlaylist } from "./entities/content-to-playlist.entity";
 import { Playlist } from "./entities/playlist.entity";
+import { ContentToPlayistFromDto } from "./utills";
 
 @Injectable()
 export class PlaylistService {
@@ -23,26 +28,28 @@ export class PlaylistService {
 
   async create(createPlaylistDto: CreatePlaylistDto) {
     let playlist = await new Playlist();
-    playlist = await this.playlistRepository.save(playlist);
-    playlist.display = await this.displayRepository.findOne(
-      +createPlaylistDto.displayId
-    );
-    playlist.contentToPlaylist = [];
-    createPlaylistDto.content.forEach(async (element) => {
-      const contentToPlaylist = new ContentToPlaylist();
-      contentToPlaylist.order = element.order;
-      contentToPlaylist.duration = element.duration;
-      contentToPlaylist.content = await this.contentRepository.findOne(
-        element.contentID
+    let display: Display;
+    try {
+      display = await this.displayRepository.findOneOrFail(
+        +createPlaylistDto.displayId
       );
-      contentToPlaylist.contentId = element.contentID;
-      contentToPlaylist.playlistId = playlist.id;
+    } catch (err) {
+      throw new NotFoundException(
+        `Cant find display to attach with id ${createPlaylistDto.displayId}`
+      );
+    }
+    if (display.playlist) {
+      throw new BadRequestException("Current Display already has playlist");
+    }
+    playlist.display = display;
+    playlist = await this.playlistRepository.save(playlist);
+    playlist.contentToPlaylist = [];
+
+    await createPlaylistDto.content.forEach(async (element) => {
+      const contentToPlaylist = ContentToPlayistFromDto(element, playlist.id);
       const resolved = await this.contentToPlayListRepository.save(
         contentToPlaylist
       );
-
-      console.log(resolved);
-
       playlist.contentToPlaylist.push(resolved);
     });
 
@@ -50,15 +57,16 @@ export class PlaylistService {
   }
 
   findAll() {
-    return this.playlistRepository.find({ relations: ["content_to_playlist"] });
+    return this.playlistRepository.find({ relations: ["contentToPlaylist"] });
   }
 
   findOne(id: number) {
     return this.playlistRepository.findOne(id);
   }
+
   findOneByDisplay(displayid: number) {
     return this.playlistRepository.findOne({
-      relations: ["display"],
+      relations: ["contentToPlaylist", "content"],
       where: `Playlist.display = ${displayid}`,
     });
   }
