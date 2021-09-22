@@ -1,4 +1,3 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreatePlaylistDto } from './create-playlist.dto';
+import { CreatePlaylistDto } from "./create-playlist.dto";
 
-export class UpdatePlaylistDto extends PartialType(CreatePlaylistDto) {}
+export class UpdatePlaylistDto extends CreatePlaylistDto {}

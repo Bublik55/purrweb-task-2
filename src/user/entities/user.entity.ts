@@ -1,8 +1,14 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsString, IsUUID } from "class-validator";
+import { IsEmail, IsNumberString, IsString } from "class-validator";
 import { randomUUID } from "crypto";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Event } from "src/event/entities/event.entity";
+import {
+  Column,
+  Entity,
+  JoinTable,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 
 @Entity()
 export class User {
@@ -10,8 +16,8 @@ export class User {
     example: randomUUID,
     type: String,
   })
-  @IsUUID()
-  @PrimaryGeneratedColumn("uuid")
+  @IsNumberString()
+  @PrimaryGeneratedColumn()
   id: string;
 
   @ApiProperty({
@@ -20,32 +26,37 @@ export class User {
     type: String,
   })
   @IsString()
-  @Column("text")
+  @Column("text", { unique: true })
   name: string;
 
   @ApiProperty({
     description: "HASHED User's password",
-    example: "Awesomepasswd",
+    example: "Awesomepasswd_hash",
     type: String,
   })
   @IsString()
   @Column("text")
-  password;
+  password!: string;
 
   @ApiProperty({
     description: "User's email",
-    example: " Awesome@some.me",
+    example: "Awesome@some.me",
     type: String,
   })
   @IsEmail()
-  @Column("text")
-  email;
+  @Column("text", { unique: true })
+  email!: string;
 
   @ApiProperty({
     description: "User's events",
     example: Event,
-    type: Event,
+    type: [Event],
   })
-  @OneToMany(() => Event, (events) => events.user)
+  @OneToMany(() => Event, (event) => event.user, {
+    eager: true,
+    cascade: true,
+    onDelete: "CASCADE",
+  })
+  @JoinTable()
   events: Event[];
 }

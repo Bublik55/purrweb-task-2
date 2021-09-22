@@ -1,9 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ContentService } from './content.service';
-import { CreateContentDto } from './dto/create-content.dto';
-import { UpdateContentDto } from './dto/update-content.dto';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+} from "@nestjs/common";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { ContentService } from "./content.service";
+import { CreateContentDto } from "./dto/create-content.dto";
+import { UpdateContentDto } from "./dto/update-content.dto";
 
-@Controller('content')
+@ApiBearerAuth()
+@ApiTags("Content crud")
+@Controller("content")
 export class ContentController {
   constructor(private readonly contentService: ContentService) {}
 
@@ -17,18 +29,18 @@ export class ContentController {
     return this.contentService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Get(":id")
+  findOne(@Param("id") id: string) {
     return this.contentService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateContentDto: UpdateContentDto) {
+  @Patch(":id")
+  update(@Param("id") id: string, @Body() updateContentDto: UpdateContentDto) {
     return this.contentService.update(+id, updateContentDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.contentService.remove(+id);
+  @Delete(":id")
+  remove(@Param("id", ParseIntPipe) id: string) {
+    return this.contentService.remove(id);
   }
 }
