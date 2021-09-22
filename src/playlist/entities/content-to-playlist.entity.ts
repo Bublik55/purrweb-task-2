@@ -1,6 +1,12 @@
 import { IsNumberString } from "class-validator";
 import { Content } from "src/content/entities/content.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Playlist } from "./playlist.entity";
 
 @Entity()
@@ -15,12 +21,15 @@ export class ContentToPlaylist {
   @IsNumberString()
   contentId: string;
 
-  @ManyToOne(() => Playlist, (playlist) => playlist.contentToPlaylist)
+  @ManyToOne(() => Playlist, (playlist) => playlist.contentToPlaylist, {
+    onDelete: "CASCADE",
+  })
   playlist: Promise<Playlist>;
 
   @ManyToOne(() => Content, (content) => content.contentToPlaylist, {
     eager: true,
   })
+  @JoinColumn()
   content: Content;
 
   @IsNumberString()

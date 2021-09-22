@@ -12,7 +12,6 @@ import { CreatePlaylistDto } from "./dto/create-playlist.dto";
 import { UpdatePlaylistDto } from "./dto/update-playlist.dto";
 import { ContentToPlaylist } from "./entities/content-to-playlist.entity";
 import { Playlist } from "./entities/playlist.entity";
-import { ContentToPlayistFromDto } from "./utills";
 
 @Injectable()
 export class PlaylistService {
@@ -28,8 +27,11 @@ export class PlaylistService {
   ) {}
 
   async create(createPlaylistDto: CreatePlaylistDto) {
+    let ret: Promise<Playlist>;
     let playlist = await new Playlist();
     let display: Display;
+
+    this.checkOrder(createPlaylistDto.content);
     try {
       display = await this.displayRepository.findOneOrFail(
         +createPlaylistDto.displayId
@@ -40,24 +42,31 @@ export class PlaylistService {
       );
     }
     if (display.playlist) {
-      // throw new BadRequestException("Current Display already has playlist");
+      throw new BadRequestException("Current Display already has Playlist");
     }
-    let ret;
     playlist.display = display;
     playlist = await this.playlistRepository.save(playlist);
     playlist.contentToPlaylist = [];
+    this.displayRepository.save(display);
+
     createPlaylistDto.content.forEach((element) => {
-      this.validateContentToPlaylistDto(element);
-      const contentToPlaylist = ContentToPlayistFromDto(element, playlist.id);
-      ret = this.contentToPlayListRepository
-        .save(contentToPlaylist)
+      ret = this.ContentToPlayistFromDto(element, playlist.id)
         .then((element) => {
           playlist.contentToPlaylist.push(element);
           return this.playlistRepository.save(playlist);
+        })
+        .catch((err) => {
+          throw new NotFoundException(
+            err + `Can't find Content with id = ${element.contentID}`
+          );
         });
     });
 
-    return ret;
+    return {
+      playlistid: (await ret).id,
+      displayid: (await ret).display.id,
+      contentToPlaylist: [...(await ret).contentToPlaylist],
+    };
   }
 
   findAll() {
@@ -83,14 +92,41 @@ export class PlaylistService {
     return `This action removes a #${id} playlist`;
   }
 
+  async ContentToPlayistFromDto(
+    dto: ContentToPlaylistDto,
+    playlistId: string
+  ): Promise<ContentToPlaylist> {
+    const ret = new ContentToPlaylist();
+    this.validateContentToPlaylistDto(dto).catch();
+    ret.order = dto.order;
+    ret.duration = dto.duration;
+    ret.contentId = dto.contentID;
+    ret.playlistId = playlistId;
+    ret.content = await this.contentRepository.findOne(dto.contentID);
+    return this.contentToPlayListRepository.save(ret);
+  }
+
+  checkOrder(dto: ContentToPlaylistDto[]) {
+    const max = dto.length;
+    const orders: number[] = [];
+    dto.forEach((element) => {
+      orders.push(Number(element.order));
+    });
+    if (
+      max !=
+      orders.reduce((a, b) => {
+        return a > b ? a : b;
+      })
+    )
+      throw new BadRequestException("Bad order");
+  }
+
   async validateContentToPlaylistDto(dto: ContentToPlaylistDto) {
-    try {
-      return await this.contentRepository.findOneOrFail(dto.contentID);
-    } catch (err) {
-      console.log(err + "======================================");
+    const ret = await this.contentRepository.findOne(dto.contentID);
+    if (ret) return ret;
+    else
       throw new NotFoundException(
-        `Can't find Content with id = ${dto.contentID}`
+        `Content with id = ${dto.contentID} don't exist`
       );
-    }
   }
 }
