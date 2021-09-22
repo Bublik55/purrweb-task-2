@@ -7,6 +7,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Content } from "src/content/entities/content.entity";
 import { Display } from "src/display/entities/display.entity";
 import { Repository } from "typeorm";
+import { ContentToPlaylistDto } from "./dto/content-to-playlist.dto";
 import { CreatePlaylistDto } from "./dto/create-playlist.dto";
 import { UpdatePlaylistDto } from "./dto/update-playlist.dto";
 import { ContentToPlaylist } from "./entities/content-to-playlist.entity";
@@ -39,21 +40,24 @@ export class PlaylistService {
       );
     }
     if (display.playlist) {
-      throw new BadRequestException("Current Display already has playlist");
+      // throw new BadRequestException("Current Display already has playlist");
     }
+    let ret;
     playlist.display = display;
     playlist = await this.playlistRepository.save(playlist);
     playlist.contentToPlaylist = [];
-
-    await createPlaylistDto.content.forEach(async (element) => {
+    createPlaylistDto.content.forEach((element) => {
+      this.validateContentToPlaylistDto(element);
       const contentToPlaylist = ContentToPlayistFromDto(element, playlist.id);
-      const resolved = await this.contentToPlayListRepository.save(
-        contentToPlaylist
-      );
-      playlist.contentToPlaylist.push(resolved);
+      ret = this.contentToPlayListRepository
+        .save(contentToPlaylist)
+        .then((element) => {
+          playlist.contentToPlaylist.push(element);
+          return this.playlistRepository.save(playlist);
+        });
     });
 
-    return await this.playlistRepository.save(playlist);
+    return ret;
   }
 
   findAll() {
@@ -77,5 +81,16 @@ export class PlaylistService {
 
   remove(id: number) {
     return `This action removes a #${id} playlist`;
+  }
+
+  async validateContentToPlaylistDto(dto: ContentToPlaylistDto) {
+    try {
+      return await this.contentRepository.findOneOrFail(dto.contentID);
+    } catch (err) {
+      console.log(err + "======================================");
+      throw new NotFoundException(
+        `Can't find Content with id = ${dto.contentID}`
+      );
+    }
   }
 }
