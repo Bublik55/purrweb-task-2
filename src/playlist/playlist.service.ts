@@ -6,10 +6,10 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { Content } from "src/content/entities/content.entity";
 import { Display } from "src/display/entities/display.entity";
-import { Repository } from "typeorm";
+import { OrderByCondition, Repository } from "typeorm";
 import { ContentToPlaylistDto } from "./dto/content-to-playlist.dto";
 import { CreatePlaylistDto } from "./dto/create-playlist.dto";
-import { UpdatePlaylistDto } from "./dto/update-playlist.dto";
+import { dataToUpdate, UpdatePlaylistDto } from "./dto/update-playlist.dto";
 import { ContentToPlaylist } from "./entities/content-to-playlist.entity";
 import { Playlist } from "./entities/playlist.entity";
 
@@ -62,11 +62,7 @@ export class PlaylistService {
         });
     });
 
-    return {
-      playlistid: (await ret).id,
-      displayid: (await ret).display.id,
-      contentToPlaylist: [...(await ret).contentToPlaylist],
-    };
+    return ret;
   }
 
   findAll() {
@@ -77,8 +73,21 @@ export class PlaylistService {
     return this.playlistRepository.findOne(id);
   }
 
-  update(id: number, updatePlaylistDto: UpdatePlaylistDto) {
-    return updatePlaylistDto;
+  async update(id: number, updatePlaylistDto: UpdatePlaylistDto) {
+    let ret: Promise<Playlist>;
+    const playlist: Playlist = await this.playlistRepository.findOne(id);
+    updatePlaylistDto.data.forEach((elem) => {
+      ret = this.flexPlaylist(elem, playlist);
+    });
+    /********************************* */
+    console.log("================================");
+    await (
+      await ret
+    ).contentToPlaylist.forEach((element) =>
+      console.log(element.order + "  " + element.id)
+    );
+    /*********************************** */
+    return ret;
   }
 
   remove(id: number) {
@@ -121,5 +130,38 @@ export class PlaylistService {
       throw new NotFoundException(
         `Content with id = ${dto.contentID} don't exist`
       );
+  }
+
+  async flexPlaylist(dataToUpdate: dataToUpdate, playlist: Playlist) {
+    const ctp = await this.contentToPlayListRepository.findOne(
+      dataToUpdate.contentToPlaylistId
+    );
+    const oldOrder = ctp.order;
+    const newOrder = dataToUpdate.newOrder;
+    playlist.contentToPlaylist.map((cur) => {
+      //moveup element if new order < old order
+      //movedown elese
+      if (newOrder < oldOrder)
+        if (
+          Number(cur.order) >= Number(newOrder) &&
+          Number(cur.order) < Number(oldOrder)
+        ) {
+          cur.order = String(Number(cur.order) + 1);
+        }
+      if (newOrder > oldOrder) {
+        if (
+          Number(cur.order) <= Number(newOrder) &&
+          Number(cur.order) > Number(oldOrder)
+        ) {
+          cur.order = String(Number(cur.order) - 1);
+        }
+      }
+    });
+    if (dataToUpdate.newOrder) ctp.order = dataToUpdate.newOrder;
+    if (dataToUpdate.newDuration) ctp.duration = dataToUpdate.newDuration;
+
+    const ret = await this.playlistRepository.save(playlist);
+    await this.contentToPlayListRepository.save(ctp);
+    return ret;
   }
 }
