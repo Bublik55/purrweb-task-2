@@ -15,7 +15,7 @@ import { UpdateContentDto } from "./dto/update-content.dto";
 
 @ApiBearerAuth()
 @ApiTags("Content crud")
-@Controller("content")
+@Controller("contents")
 export class ContentController {
   constructor(private readonly contentService: ContentService) {}
 

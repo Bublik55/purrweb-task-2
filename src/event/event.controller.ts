@@ -21,7 +21,7 @@ import { Event } from "./entities/event.entity";
 import { EventService } from "./event.service";
 @ApiBearerAuth()
 @ApiTags("Events")
-@Controller("users/:userId/events")
+@Controller("events")
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
@@ -37,11 +37,7 @@ export class EventController {
     type: Event,
   })
   @Post()
-  create(
-    @Param("userId", ParseIntPipe) userid: string,
-    @Body() createEventDto: CreateEventDto
-  ) {
-    createEventDto.user = userid;
+  create(@Body() createEventDto: CreateEventDto) {
     return this.eventService.create(createEventDto);
   }
 

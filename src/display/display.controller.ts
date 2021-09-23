@@ -13,16 +13,12 @@ import { CreateDisplayDto } from "./dto/create-display.dto";
 import { UpdateDisplayDto } from "./dto/update-display.dto";
 @ApiBearerAuth()
 @ApiTags("Display")
-@Controller("events/:eventid/display")
+@Controller("displays")
 export class DisplayController {
   constructor(private readonly displayService: DisplayService) {}
 
   @Post()
-  create(
-    @Param("eventid") eventId: string,
-    @Body() createDisplayDto: CreateDisplayDto
-  ) {
-    createDisplayDto.event = eventId;
+  create(@Body() createDisplayDto: CreateDisplayDto) {
     return this.displayService.create(createDisplayDto);
   }
 

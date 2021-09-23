@@ -1,7 +1,9 @@
 import { Display } from "src/display/entities/display.entity";
+import { User } from "src/user/entities/user.entity";
 import {
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -28,4 +30,10 @@ export class Playlist {
   )
   @JoinColumn()
   contentToPlaylist: ContentToPlaylist[];
+
+  @ManyToOne(() => User, {
+    onDelete: "CASCADE",
+    lazy: true,
+  })
+  author: Promise<User>;
 }

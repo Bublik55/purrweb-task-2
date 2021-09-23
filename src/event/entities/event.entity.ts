@@ -39,7 +39,7 @@ export class Event {
     lazy: true,
   })
   @JoinTable()
-  user: Promise<User>;
+  author: Promise<User>;
 
   @ApiProperty({
     description: "Event`s displays",

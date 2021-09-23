@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { IsNumber, IsNumberString } from "class-validator";
 import { ContentToPlaylistDto } from "./content-to-playlist.dto";
 
 const exa: ContentToPlaylistDto = new ContentToPlaylistDto();
@@ -11,6 +12,14 @@ export class CreatePlaylistDto {
     example: "1",
   })
   displayId: string;
+
+  @ApiProperty({
+    description: "AuthorId",
+    example: "1",
+  })
+  @IsNumberString()
+  userId: string;
+
   @ApiProperty({
     description: "This contain array of [contentId, order, duration]",
     example: [exa],

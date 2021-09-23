@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "src/user/entities/user.entity";
 import { Repository } from "typeorm";
 import { CreateContentDto } from "./dto/create-content.dto";
 import { UpdateContentDto } from "./dto/update-content.dto";
@@ -13,7 +14,9 @@ import { Content, CONTENT_TYPE } from "./entities/content.entity";
 export class ContentService {
   constructor(
     @InjectRepository(Content)
-    private contentRepository: Repository<Content>
+    private contentRepository: Repository<Content>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>
   ) {}
 
   async create(createContentDto: CreateContentDto) {
@@ -22,6 +25,7 @@ export class ContentService {
       content.contentType =
         CONTENT_TYPE[createContentDto.contentType.toUpperCase()];
       content.url = createContentDto.url;
+      content.author = this.userRepository.findOne(createContentDto.userId);
       return await this.contentRepository.save(content);
     } catch (error) {
       throw new BadRequestException();

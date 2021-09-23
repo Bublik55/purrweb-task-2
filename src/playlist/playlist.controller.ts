@@ -13,7 +13,7 @@ import { UpdatePlaylistDto } from "./dto/update-playlist.dto";
 import { PlaylistService } from "./playlist.service";
 @ApiBearerAuth()
 @ApiTags("Playlist oper")
-@Controller("playlists/")
+@Controller("playlists")
 export class PlaylistController {
   constructor(private readonly playlistService: PlaylistService) {}
 
