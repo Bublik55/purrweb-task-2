@@ -52,7 +52,7 @@ export class User {
     example: Event,
     type: [Event],
   })
-  @OneToMany(() => Event, (event) => event.user, {
+  @OneToMany(() => Event, (event) => event.author, {
     eager: true,
     cascade: true,
     onDelete: "CASCADE",

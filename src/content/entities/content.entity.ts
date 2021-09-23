@@ -1,7 +1,14 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString } from "class-validator";
 import { ContentToPlaylist } from "src/playlist/entities/content-to-playlist.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "src/user/entities/user.entity";
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 
 export enum CONTENT_TYPE {
   PICTURE = "PICTURE",
@@ -37,4 +44,10 @@ export class Content {
     { cascade: true }
   )
   contentToPlaylist: ContentToPlaylist[];
+
+  @ManyToOne(() => User, {
+    onDelete: "CASCADE",
+    lazy: true,
+  })
+  author: Promise<User>;
 }

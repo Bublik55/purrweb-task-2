@@ -10,21 +10,28 @@ import {
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { CreatePlaylistDto } from "./dto/create-playlist.dto";
 import { UpdatePlaylistDto } from "./dto/update-playlist.dto";
+import { Playlist } from "./entities/playlist.entity";
 import { PlaylistService } from "./playlist.service";
 @ApiBearerAuth()
 @ApiTags("Playlist oper")
-@Controller("playlists/")
+@Controller("playlists")
 export class PlaylistController {
   constructor(private readonly playlistService: PlaylistService) {}
 
   @Post()
-  create(@Body() createPlaylistDto: CreatePlaylistDto) {
-    return this.playlistService.create(createPlaylistDto);
+  async create(@Body() createPlaylistDto: CreatePlaylistDto) {
+    const ret = await this.playlistService.create(createPlaylistDto);
+    return {
+      playlistid: ret.id,
+      displayid: ret.display.id,
+      contentToPlaylist: ret.contentToPlaylist,
+    };
   }
 
   @Get()
-  findAll() {
-    return this.playlistService.findAll();
+  async findAll() {
+    const ret: Playlist[] = await this.playlistService.findAll();
+    return ret;
   }
 
   @Get(":id")

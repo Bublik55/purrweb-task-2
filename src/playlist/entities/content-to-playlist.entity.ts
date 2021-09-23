@@ -1,5 +1,6 @@
 import { IsNumberString } from "class-validator";
 import { Content } from "src/content/entities/content.entity";
+import { User } from "src/user/entities/user.entity";
 import {
   Column,
   Entity,

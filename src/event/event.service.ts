@@ -24,8 +24,8 @@ export class EventService {
   async create(createEventDto: CreateEventDto) {
     const event = new Event();
     ///
-    const user = this.userRepository.findOne(createEventDto.user);
-    event.user = Promise.resolve(user);
+    const user = this.userRepository.findOne(createEventDto.userId);
+    event.author = Promise.resolve(user);
     if (user) return this.eventRepository.save(event);
     else throw new BadRequestException();
   }

@@ -1,5 +1,6 @@
 import { Event } from "src/event/entities/event.entity";
 import { Playlist } from "src/playlist/entities/playlist.entity";
+import { User } from "src/user/entities/user.entity";
 import {
   Entity,
   JoinColumn,
@@ -25,4 +26,10 @@ export class Display {
     onDelete: "SET NULL",
   })
   event: Promise<Event>;
+
+  @ManyToOne(() => User, {
+    onDelete: "CASCADE",
+    lazy: true,
+  })
+  author: Promise<User>;
 }
