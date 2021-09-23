@@ -1,24 +1,35 @@
+import { Event } from "src/event/entities/event.entity";
+import { Playlist } from "src/playlist/entities/playlist.entity";
+import { User } from "src/user/entities/user.entity";
 import {
   Entity,
   JoinColumn,
-  JoinTable,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Event } from "src/event/entities/event.entity";
-import { Playlist } from "src/playlist/entities/playlist.entity";
 
 @Entity()
 export class Display {
-  @PrimaryGeneratedColumn("uuid") id: string;
+  @PrimaryGeneratedColumn() id: string;
 
   @OneToOne(() => Playlist, (playlist) => playlist.display, {
     eager: true,
+    cascade: true,
+    onDelete: "SET NULL",
   })
   @JoinColumn()
   playlist: Playlist;
 
-  @ManyToOne(() => Event, (event) => event.displays)
-  event: Event;
+  @ManyToOne(() => Event, (event) => event.displays, {
+    lazy: true,
+    onDelete: "SET NULL",
+  })
+  event: Promise<Event>;
+
+  @ManyToOne(() => User, {
+    onDelete: "CASCADE",
+    lazy: true,
+  })
+  author: Promise<User>;
 }

@@ -1,11 +1,17 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { randomUUID } from "crypto";
 
 export class CreateEventDto {
-	@ApiProperty({
-		description: "Owner/author id",
-		type: String,
-		example : randomUUID
-	})
-	user: string;
+  @ApiProperty({
+    description: "Owner/author id",
+    type: String,
+    example: "1",
+  })
+  userId: string;
+
+  @ApiProperty({
+    description: "Title of event",
+    type: String,
+    example: "BEST EVENT",
+  })
+  title: string;
 }

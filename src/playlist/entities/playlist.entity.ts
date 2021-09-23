@@ -1,7 +1,9 @@
 import { Display } from "src/display/entities/display.entity";
+import { User } from "src/user/entities/user.entity";
 import {
   Entity,
-  JoinTable,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -10,9 +12,11 @@ import { ContentToPlaylist } from "./content-to-playlist.entity";
 
 @Entity()
 export class Playlist {
-  @PrimaryGeneratedColumn("uuid") id: string;
+  @PrimaryGeneratedColumn() id: string;
 
-  @OneToOne(() => Display, (display) => display.playlist)
+  @OneToOne(() => Display, (display) => display.playlist, {
+    onDelete: "CASCADE",
+  })
   display: Display;
 
   @OneToMany(
@@ -20,8 +24,16 @@ export class Playlist {
     (contentToPlaylist) => contentToPlaylist.playlist,
     {
       eager: true,
+      cascade: true,
+      onDelete: "CASCADE",
     }
   )
-  @JoinTable()
+  @JoinColumn()
   contentToPlaylist: ContentToPlaylist[];
+
+  @ManyToOne(() => User, {
+    onDelete: "CASCADE",
+    lazy: true,
+  })
+  author: Promise<User>;
 }

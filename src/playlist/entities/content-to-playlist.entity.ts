@@ -1,19 +1,42 @@
-import { IsNumber } from "class-validator";
+import { IsNumberString } from "class-validator";
 import { Content } from "src/content/entities/content.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "src/user/entities/user.entity";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Playlist } from "./playlist.entity";
 
 @Entity()
 export class ContentToPlaylist {
-  @PrimaryGeneratedColumn("uuid") id: string;
+  @PrimaryGeneratedColumn() id: string;
 
-  @ManyToOne(() => Playlist, (playlist) => playlist.contentToPlaylist)
-  playlist: Playlist;
+  @Column()
+  @IsNumberString()
+  playlistId: string;
 
-  @ManyToOne(() => Content, (content) => content.contentToPlaylist)
+  @Column()
+  @IsNumberString()
+  contentId: string;
+
+  @ManyToOne(() => Playlist, (playlist) => playlist.contentToPlaylist, {
+    onDelete: "CASCADE",
+  })
+  playlist: Promise<Playlist>;
+
+  @ManyToOne(() => Content, (content) => content.contentToPlaylist, {
+    eager: true,
+  })
+  @JoinColumn()
   content: Content;
 
-  @IsNumber()
+  @IsNumberString()
+  @Column("real")
+  duration: string;
+  @IsNumberString()
   @Column()
-  order: number;
+  order: string;
 }

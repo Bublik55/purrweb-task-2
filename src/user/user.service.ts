@@ -21,15 +21,16 @@ export class UserService {
     user.email = createUserDto.email;
     user.name = createUserDto.name;
     user.password = createUserDto.password;
-    if (await this.userRepository.save(user)) {
+    try {
+      await this.userRepository.save(user);
       return user;
-    } else {
+    } catch (error) {
       throw new BadRequestException("Email or Login already exists");
     }
   }
 
-  findAll() {
-    return this.userRepository.find();
+  async findAll() {
+    return await this.userRepository.find();
   }
 
   async findOneByName(name: string) {
@@ -38,19 +39,28 @@ export class UserService {
     else throw new NotFoundException(`Cannot find user with name ${name}`);
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const user = await this.userRepository.findOne(id);
     if (user) return user;
-    else throw new NotFoundException(`Cannot find user with id ${id}`);
+    else throw new NotFoundException(`Cannot find user with uuid ${id}`);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    try {
+      const user = await this.userRepository.findOne(id);
+      user.name = updateUserDto.name;
+      user.password = updateUserDto.password;
+      user.email = user.email;
+      const ret = await this.userRepository.save(user);
+      return ret;
+    } catch (error) {
+      throw new BadRequestException("Name/Password already exists");
+    }
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const user = await this.userRepository.delete(id);
-    if (user) return true;
+    if (user.affected) return true;
     else return false;
   }
 }

@@ -1,26 +1,63 @@
-import { Injectable } from '@nestjs/common';
-import { CreateEventDto } from './dto/create-event.dto';
-import { UpdateEventDto } from './dto/update-event.dto';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Display } from "src/display/entities/display.entity";
+import { User } from "src/user/entities/user.entity";
+import { Repository } from "typeorm";
+import { CreateEventDto } from "./dto/create-event.dto";
+import { UpdateEventDto } from "./dto/update-event.dto";
+import { Event } from "./entities/event.entity";
 
 @Injectable()
 export class EventService {
-  create(createEventDto: CreateEventDto) {
-    return 'This action adds a new event';
+  constructor(
+    @InjectRepository(Event)
+    private eventRepository: Repository<Event>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+    @InjectRepository(Display)
+    private displayRepository: Repository<Display>
+  ) {}
+  async create(createEventDto: CreateEventDto) {
+    const event = new Event();
+    ///
+    const user = this.userRepository.findOne(createEventDto.userId);
+    event.author = Promise.resolve(user);
+    if (user) return this.eventRepository.save(event);
+    else throw new BadRequestException();
   }
 
-  findAll() {
-    return `This action returns all event`;
+  //@Warnig QUERY FOR ALL USER'S PLAYLISTS
+  async findAll(authorId: string) {
+    return await (
+      await this.userRepository.findOne(authorId)
+    ).events;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} event`;
+  async findOne(id: number) {
+    const event = await this.eventRepository.findOne(id);
+    if (event) return event;
+    else throw new NotFoundException(`Cannot find event with id ${id}`);
   }
 
-  update(id: number, updateEventDto: UpdateEventDto) {
-    return `This action updates a #${id} event`;
+  async update(id: number, updateEventDto: UpdateEventDto) {
+    const event = await this.eventRepository.findOne(id);
+    if (updateEventDto.title) {
+      event.title = updateEventDto.title;
+    }
+    updateEventDto.displays.forEach(async (element) => {
+      const display = await this.displayRepository.findOne(element);
+      event.displays.push(display);
+    });
+    return await this.eventRepository.save(event);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} event`;
+  async remove(id: number) {
+    const res = await this.eventRepository.delete(id);
+    if (res.affected) return true;
+    else return false;
   }
 }

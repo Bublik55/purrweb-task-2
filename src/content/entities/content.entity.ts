@@ -1,32 +1,32 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString } from "class-validator";
 import { ContentToPlaylist } from "src/playlist/entities/content-to-playlist.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "src/user/entities/user.entity";
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 
 export enum CONTENT_TYPE {
-  PICTURE,
-  HTML,
-  VIDEO,
-  AUDIO,
+  PICTURE = "PICTURE",
+  HTML = "HTML",
+  VIDEO = "VIDEO",
+  AUDIO = "AUDIO",
 }
 
 @Entity()
 export class Content {
-  @PrimaryGeneratedColumn("uuid") id: string;
-
-  @ApiProperty({
-    description: "Order in playlist",
-    type: Number,
-    example: 1,
-  })
-  order: number;
+  @PrimaryGeneratedColumn() id: string;
 
   @ApiProperty({
     description: `Type of content`,
     type: CONTENT_TYPE,
     example: CONTENT_TYPE.PICTURE,
   })
-  @Column("text")
+  @Column("enum", { enum: CONTENT_TYPE })
   contentType: CONTENT_TYPE;
 
   @ApiProperty({
@@ -35,12 +35,19 @@ export class Content {
     example: "RANDOMURL",
   })
   @IsString()
-  @Column("text")
+  @Column("text", { unique: true })
   url: string;
 
   @OneToMany(
     () => ContentToPlaylist,
-    (contentToPlaylist) => contentToPlaylist.content
+    (contentToPlaylist) => contentToPlaylist.content,
+    { cascade: true }
   )
   contentToPlaylist: ContentToPlaylist[];
+
+  @ManyToOne(() => User, {
+    onDelete: "CASCADE",
+    lazy: true,
+  })
+  author: Promise<User>;
 }

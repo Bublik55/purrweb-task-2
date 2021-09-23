@@ -1,16 +1,14 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
-import { UserService } from 'src/user/user.service';
-import { User } from 'src/user/entities/user.entity';
-import { Public } from './guards/jwt-auth.guard';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import * as bcrypt from "bcrypt";
+import { User } from "src/user/entities/user.entity";
+import { UserService } from "src/user/user.service";
 
 @Injectable()
 export class AuthService {
   constructor(
-    
     private readonly userService: UserService,
-    private readonly jwtService: JwtService,
+    private readonly jwtService: JwtService
   ) {}
 
   async validateUser(name: string, pass: string) {
@@ -31,7 +29,7 @@ export class AuthService {
     if (await this.validateUser(loginDto.name, loginDto.password)) {
       const token = await this.generateToken(user);
       return { token };
-    } else throw new HttpException('BadRequest', HttpStatus.BAD_REQUEST);
+    } else throw new HttpException("BadRequest", HttpStatus.BAD_REQUEST);
   }
 
   public async create(user) {
