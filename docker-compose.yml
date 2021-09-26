@@ -8,17 +8,23 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    ports:
+      - 5432:5432
   adminer:
     image: adminer
     restart: always
     ports:
       - 8080:8080    
   task2:
-    image: task2
+    container_name: task2
     build:
       context: .
-      dockerfile: ./Dockerfile
-    environment:
-      NODE_ENV: production
+      target: development
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
     ports:
-      - 4000:4000
+      - 9229:9229
+    command: npm run start:dev
+    env_file:
+      - .env
