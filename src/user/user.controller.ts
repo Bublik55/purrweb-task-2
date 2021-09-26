@@ -16,7 +16,7 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { UserOwnerGuard } from "src/utils/auth/guards/owner.guards";
+import { UserOwnerGuard } from "src/utils/auth/guards/owner.guards/user.owner.guard";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./entities/user.entity";
