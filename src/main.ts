@@ -11,14 +11,10 @@ async function bootstrap() {
     .setDescription(
       `Auth/SignUp is public route.
 	  All requests to other routes must contain jwt token.
-      \tUser can create column by users/{userid}/colummns route in one case:\n
-      \tClient's userID == {userID}
+      \tUser can create resource when userId in dto contain his id :\n
       \tUser can update and delete sources in one case - he/she is author of source.
-      \n<b>Data from DB will not serialized.</b>
-	  \nAuthor of source setups in DTO manualy - anyone can setup any ID
-		\n Status 500 not handled
-		\n No custom exceptions
-      `
+	  \nAuthor of source setups in DTO - anyone can't setup any ID - otherwise Guard will rejects reqest
+		\n Status 500 not handled`
     )
     .setVersion("0.0.1")
     .addBearerAuth()
