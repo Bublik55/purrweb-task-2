@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UseGuards,
 } from "@nestjs/common";
 import {
   ApiBearerAuth,
@@ -15,6 +16,7 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
+import { EventOwnerGuard } from "src/utils/auth/guards/owner.guards/event.owner.guard";
 import { CreateEventDto } from "./dto/create-event.dto";
 import { UpdateEventDto } from "./dto/update-event.dto";
 import { Event } from "./entities/event.entity";
@@ -42,20 +44,20 @@ export class EventController {
   }
 
   @ApiOperation({
-    summary: "Return all events of user",
-    description: "Return events by userId. UserId in path",
+    summary: "Return all events",
+    description: "Return events with authors and displays",
   })
   @ApiResponse({
     status: 200,
     type: [Event],
   })
   @Get()
-  findAll(@Param("userId", ParseIntPipe) authorId: string) {
-    return this.eventService.findAll(authorId);
+  findAll() {
+    return this.eventService.findAll();
   }
 
   @ApiOperation({
-    summary: "Getevent by id",
+    summary: "Get event by id",
     description:
       "Get event if event exists. Return event with author and displays",
   })
@@ -71,6 +73,7 @@ export class EventController {
     return this.eventService.findOne(+id);
   }
 
+  @UseGuards(EventOwnerGuard)
   @ApiOperation({
     summary: "Update event",
     description: "Update event - attach displays to its. Displays ids in DTO",
@@ -87,6 +90,7 @@ export class EventController {
     return this.eventService.update(+id, updateEventDto);
   }
 
+  @UseGuards(EventOwnerGuard)
   @ApiOperation({
     summary: "Delete event",
     description:

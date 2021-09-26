@@ -13,7 +13,7 @@ import {
 @Entity()
 export class User {
   @ApiProperty({
-    example: randomUUID,
+    example: "1",
     type: String,
   })
   @IsNumberString()
@@ -53,10 +53,9 @@ export class User {
     type: [Event],
   })
   @OneToMany(() => Event, (event) => event.author, {
-    eager: true,
     cascade: true,
-    onDelete: "CASCADE",
+    onDelete: "SET NULL",
   })
   @JoinTable()
-  events: Event[];
+  events: Promise<Event[]>;
 }

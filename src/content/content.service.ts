@@ -14,30 +14,33 @@ import { Content, CONTENT_TYPE } from "./entities/content.entity";
 export class ContentService {
   constructor(
     @InjectRepository(Content)
-    private contentRepository: Repository<Content>,
-    @InjectRepository(User)
-    private userRepository: Repository<User>
+    private contentRepository: Repository<Content>
   ) {}
 
   async create(createContentDto: CreateContentDto) {
     const content = new Content();
-    try {
-      content.contentType =
-        CONTENT_TYPE[createContentDto.contentType.toUpperCase()];
-      content.url = createContentDto.url;
-      content.author = this.userRepository.findOne(createContentDto.userId);
-      return await this.contentRepository.save(content);
-    } catch (error) {
-      throw new BadRequestException();
-    }
+    content.contentType =
+      CONTENT_TYPE[createContentDto.contentType.toUpperCase()];
+    if (!content.contentType)
+      throw new BadRequestException("Bad Format of `Content Type`");
+
+    content.path = createContentDto.url;
+    content.authorId = createContentDto.userId;
+    return await this.contentRepository.save(content).catch((err) => {
+      throw new BadRequestException(
+        `Content with path ${content.path} already exists`
+      );
+    });
   }
 
   async findAll() {
-    return await this.contentRepository.find();
+    return await this.contentRepository.find({ relations: ["author"] });
   }
 
   async findOne(id: number) {
-    const res = await this.contentRepository.findOne(id);
+    const res = await this.contentRepository.findOne(id, {
+      relations: ["author"],
+    });
     if (res) return res;
     else throw new NotFoundException(`Content with id = ${id} does not exists`);
   }
@@ -46,7 +49,7 @@ export class ContentService {
     const obj = await this.contentRepository.findOne(id);
     if (!obj)
       throw new NotFoundException(`Content with id = ${id} does not exists`);
-    obj.url = updateContentDto.url;
+    obj.path = updateContentDto.url;
     obj.contentType = CONTENT_TYPE[updateContentDto.contentType.toUpperCase()];
     return await this.contentRepository.update(id, obj);
   }

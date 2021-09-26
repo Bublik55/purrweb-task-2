@@ -3,6 +3,7 @@ import { IsNumberString } from "class-validator";
 import { Display } from "src/display/entities/display.entity";
 import { User } from "src/user/entities/user.entity";
 import {
+  Column,
   Entity,
   JoinColumn,
   JoinTable,
@@ -24,9 +25,10 @@ export class Event {
 
   @ApiProperty({
     description: "Title of Event",
-    example: "BEST EVENT",
+    example: "Title",
     type: String,
   })
+  @Column()
   title: string;
 
   @ApiProperty({
@@ -34,7 +36,7 @@ export class Event {
     example: User,
     type: User,
   })
-  @ManyToOne(() => User, {
+  @ManyToOne(() => User, (author) => author.events, {
     onDelete: "CASCADE",
     lazy: true,
   })
@@ -43,14 +45,14 @@ export class Event {
 
   @ApiProperty({
     description: "Event`s displays",
-    example: [Display],
-    type: Display,
+    example: Display,
+    type: [Display],
   })
   @OneToMany(() => Display, (displays) => displays.event, {
-    eager: true,
+    lazy: true,
     cascade: true,
-    onDelete: "CASCADE",
+    onDelete: "SET NULL",
   })
   @JoinColumn()
-  displays: Display[];
+  displays: Promise<Display[]>;
 }

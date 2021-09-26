@@ -21,36 +21,41 @@ export class EventService {
     @InjectRepository(Display)
     private displayRepository: Repository<Display>
   ) {}
+
   async create(createEventDto: CreateEventDto) {
     const event = new Event();
     ///
-    const user = this.userRepository.findOne(createEventDto.userId);
+    event.title = createEventDto.title;
+    const user = await this.userRepository.findOne(createEventDto.userId);
     event.author = Promise.resolve(user);
     if (user) return this.eventRepository.save(event);
     else throw new BadRequestException();
   }
 
-  //@Warnig QUERY FOR ALL USER'S PLAYLISTS
-  async findAll(authorId: string) {
-    return await (
-      await this.userRepository.findOne(authorId)
-    ).events;
+  async findAll() {
+    return this.eventRepository.find({
+      relations: ["author", "displays"],
+    });
   }
 
   async findOne(id: number) {
-    const event = await this.eventRepository.findOne(id);
+    const event = await this.eventRepository.findOne(id, {
+      relations: ["author", "displays"],
+    });
     if (event) return event;
     else throw new NotFoundException(`Cannot find event with id ${id}`);
   }
 
   async update(id: number, updateEventDto: UpdateEventDto) {
-    const event = await this.eventRepository.findOne(id);
+    const event = await this.eventRepository.findOne(id, {
+      relations: ["displays"],
+    });
     if (updateEventDto.title) {
       event.title = updateEventDto.title;
     }
     updateEventDto.displays.forEach(async (element) => {
       const display = await this.displayRepository.findOne(element);
-      event.displays.push(display);
+      (await event.displays).push(await Promise.resolve(display));
     });
     return await this.eventRepository.save(event);
   }
