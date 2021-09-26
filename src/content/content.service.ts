@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "src/user/entities/user.entity";
 import { Repository } from "typeorm";
 import { CreateContentDto } from "./dto/create-content.dto";
 import { UpdateContentDto } from "./dto/update-content.dto";
@@ -26,7 +25,7 @@ export class ContentService {
 
     content.path = createContentDto.url;
     content.authorId = createContentDto.userId;
-    return await this.contentRepository.save(content).catch((err) => {
+    return await this.contentRepository.save(content).catch(() => {
       throw new BadRequestException(
         `Content with path ${content.path} already exists`
       );

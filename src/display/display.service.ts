@@ -57,7 +57,7 @@ export class DisplayService {
     );
     const display = await this.displayRepository.findOne(id);
     display.playlist = playlist;
-    return this.displayRepository.save(display).catch((err) => {
+    return this.displayRepository.save(display).catch(() => {
       throw new BadRequestException("Playlist has attached to other display");
     });
   }
