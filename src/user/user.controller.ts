@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UseGuards,
 } from "@nestjs/common";
 import {
   ApiBearerAuth,
@@ -15,6 +16,7 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
+import { UserOwnerGuard } from "src/utils/auth/guards/owner.guards/user.owner.guard";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./entities/user.entity";
@@ -71,6 +73,7 @@ export class UserController {
     return this.userService.findOne(id);
   }
 
+  @UseGuards(UserOwnerGuard)
   @ApiOperation({
     summary: "Update user",
     description: "Update user if user exists",
@@ -90,6 +93,7 @@ export class UserController {
     return this.userService.update(id, updateUserDto);
   }
 
+  @UseGuards(UserOwnerGuard)
   @ApiOperation({
     summary: "Delete user",
     description:

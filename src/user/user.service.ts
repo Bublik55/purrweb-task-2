@@ -30,19 +30,25 @@ export class UserService {
   }
 
   async findAll() {
-    return await this.userRepository.find();
+    return await this.userRepository.find({
+      relations: ["events", "events.displays"],
+    });
   }
 
   async findOneByName(name: string) {
-    const user: User = await this.userRepository.findOne({ name: name });
+    const user: User = await this.userRepository.findOne({
+      where: { name: name },
+    });
     if (user) return user;
     else throw new NotFoundException(`Cannot find user with name ${name}`);
   }
 
   async findOne(id: string) {
-    const user = await this.userRepository.findOne(id);
+    const user = await this.userRepository.findOne(id, {
+      relations: ["events", "events.displays"],
+    });
     if (user) return user;
-    else throw new NotFoundException(`Cannot find user with uuid ${id}`);
+    else throw new NotFoundException(`Cannot find user with id ${id}`);
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {

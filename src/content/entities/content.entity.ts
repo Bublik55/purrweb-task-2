@@ -19,12 +19,18 @@ export enum CONTENT_TYPE {
 
 @Entity()
 export class Content {
-  @PrimaryGeneratedColumn() id: string;
+  @ApiProperty({
+    description: "Content`s id",
+    example: "98",
+    type: String,
+  })
+  @PrimaryGeneratedColumn()
+  id: string;
 
   @ApiProperty({
     description: `Type of content`,
-    type: CONTENT_TYPE,
-    example: CONTENT_TYPE.PICTURE,
+    // type: CONTENT_TYPE,
+    example: CONTENT_TYPE,
   })
   @Column("enum", { enum: CONTENT_TYPE })
   contentType: CONTENT_TYPE;
@@ -36,7 +42,7 @@ export class Content {
   })
   @IsString()
   @Column("text", { unique: true })
-  url: string;
+  path: string;
 
   @OneToMany(
     () => ContentToPlaylist,
@@ -45,6 +51,13 @@ export class Content {
   )
   contentToPlaylist: ContentToPlaylist[];
 
+  @Column()
+  authorId: string;
+  @ApiProperty({
+    description: "User -  owner of Content - Promise",
+    example: User,
+    type: User,
+  })
   @ManyToOne(() => User, {
     onDelete: "CASCADE",
     lazy: true,

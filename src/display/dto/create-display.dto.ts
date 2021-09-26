@@ -7,7 +7,7 @@ export class CreateDisplayDto {
     type: String,
     example: "2",
   })
-  event: string;
+  eventId: string;
   @ApiProperty({
     description: "Author id",
     type: String,
