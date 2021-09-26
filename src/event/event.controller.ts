@@ -16,6 +16,7 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
+import { CreatorGuards } from "src/utils/auth/guards/creator.guard";
 import { EventOwnerGuard } from "src/utils/auth/guards/owner.guards/event.owner.guard";
 import { CreateEventDto } from "./dto/create-event.dto";
 import { UpdateEventDto } from "./dto/update-event.dto";
@@ -27,6 +28,7 @@ import { EventService } from "./event.service";
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
+  @UseGuards(CreatorGuards)
   @ApiOperation({
     summary: "Create event",
     description: "Create event and attach user to its. UserId in path",

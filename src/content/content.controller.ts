@@ -16,6 +16,7 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
+import { CreatorGuards } from "src/utils/auth/guards/creator.guard";
 import { ContentOwnerGuard } from "src/utils/auth/guards/owner.guards/content.owner.guard";
 import { ContentService } from "./content.service";
 import { CreateContentDto } from "./dto/create-content.dto";
@@ -28,6 +29,7 @@ import { Content } from "./entities/content.entity";
 export class ContentController {
   constructor(private readonly contentService: ContentService) {}
 
+  @UseGuards(CreatorGuards)
   @ApiOperation({
     summary: "Create content",
     description: "Create content - save url in DB",

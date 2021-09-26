@@ -20,7 +20,6 @@ export class AuthController {
     description: "Ok login",
   })
   async login(@Body() loginDto: LoginDto) {
-    console.log(process.env.TOKEN_EXPIRATION);
     return await this.authService.login(loginDto);
   }
 

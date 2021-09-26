@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from "@nestjs/common";
 import {
   ApiBearerAuth,
@@ -14,6 +15,8 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
+import { CreatorGuards } from "src/utils/auth/guards/creator.guard";
+import { PlaylistOwnerGuard } from "src/utils/auth/guards/owner.guards/playlist.owner.guard";
 import { CreatePlaylistDto } from "./dto/create-playlist.dto";
 import { UpdatePlaylistDto } from "./dto/update-playlist.dto";
 import { Playlist } from "./entities/playlist.entity";
@@ -23,6 +26,8 @@ import { PlaylistService } from "./playlist.service";
 @Controller("playlists")
 export class PlaylistController {
   constructor(private readonly playlistService: PlaylistService) {}
+
+  @UseGuards(CreatorGuards)
   @ApiOperation({
     summary: "Create Playlist",
     description:
@@ -72,6 +77,7 @@ export class PlaylistController {
     return this.playlistService.findOne(+id);
   }
 
+  @UseGuards(PlaylistOwnerGuard)
   @ApiOperation({
     summary: "Update playlist by ID",
     description: "Set new order and duration  of contentToPlaylist",
@@ -88,6 +94,7 @@ export class PlaylistController {
     return this.playlistService.update(+id, updatePlaylistDto);
   }
 
+  @UseGuards(PlaylistOwnerGuard)
   @ApiOperation({
     summary: "Delete playlist",
     description:

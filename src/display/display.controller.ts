@@ -15,6 +15,7 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
+import { CreatorGuards } from "src/utils/auth/guards/creator.guard";
 import { DisplayOwnerGuard } from "src/utils/auth/guards/owner.guards/display.owner.guard";
 import { DisplayService } from "./display.service";
 import { CreateDisplayDto } from "./dto/create-display.dto";
@@ -26,6 +27,7 @@ import { Display } from "./entities/display.entity";
 export class DisplayController {
   constructor(private readonly displayService: DisplayService) {}
 
+  @UseGuards(CreatorGuards)
   @ApiOperation({
     summary: "Create display",
     description:

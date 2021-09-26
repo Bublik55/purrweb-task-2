@@ -40,7 +40,12 @@ export class AuthService {
   }
 
   private async generateToken(data: User) {
-    const token = await this.jwtService.signAsync({ ...data[`dataValues`] });
+    const token = await this.jwtService.signAsync({
+      id: data.id,
+      name: data.name,
+      password: data.password,
+      email: data.email,
+    });
     return token;
   }
 
