@@ -57,6 +57,7 @@ export class DisplayService {
     );
     const display = await this.displayRepository.findOne(id);
     display.playlist = playlist;
+    // REVU: Валидировать это в пайпах. Позволить перепривязывать плейлисты к дисплеям
     return this.displayRepository.save(display).catch(() => {
       throw new BadRequestException("Playlist has attached to other display");
     });

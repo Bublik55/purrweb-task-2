@@ -25,10 +25,12 @@ export class UserService {
       await this.userRepository.save(user);
       return user;
     } catch (error) {
+      // REVU: Это должно валидироваться в папйпах, будет правльнее если из бизнесс логики не будут выбрасывать исключения
       throw new BadRequestException("Email or Login already exists");
     }
   }
 
+  // REVU: User'ы отдаются с паролями
   async findAll() {
     return await this.userRepository.find({
       relations: ["events", "events.displays"],
@@ -40,6 +42,7 @@ export class UserService {
       where: { name: name },
     });
     if (user) return user;
+    // REVU: Это должно валидироваться в папйпах, будет правльнее если из бизнесс логики не будут выбрасывать исключения
     else throw new NotFoundException(`Cannot find user with name ${name}`);
   }
 
@@ -48,6 +51,7 @@ export class UserService {
       relations: ["events", "events.displays"],
     });
     if (user) return user;
+    // REVU: Это должно валидироваться в папйпах, будет правльнее если из бизнесс логики не будут выбрасывать исключения
     else throw new NotFoundException(`Cannot find user with id ${id}`);
   }
 
@@ -56,7 +60,10 @@ export class UserService {
       const user = await this.userRepository.findOne(id);
       user.name = updateUserDto.name;
       user.password = updateUserDto.password;
+      // REVU: ?????
       user.email = user.email;
+
+      //REVU: userRepository.update({ id }, updateUserDto)
       const ret = await this.userRepository.save(user);
       return ret;
     } catch (error) {

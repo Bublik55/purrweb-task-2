@@ -13,6 +13,8 @@ export class UserOwnerGuard extends AuthGuard("jwt") {
 
   canActivate(context: ExecutionContext) {
     const userEntityIds = UserEntityIds(context);
+
+    //REVU: Можно просто возвращать boolean
     if (userEntityIds.entityID == userEntityIds.userID) {
       return true;
     } else throw new ForbiddenException("Forbidden operation for user");

@@ -20,6 +20,7 @@ export class AuthService {
     if (!match) {
       return null;
     }
+    // REVU: ????
     user;
     return user.id;
   }
@@ -40,6 +41,7 @@ export class AuthService {
   }
 
   private async generateToken(data: User) {
+    // REVU: нет sub и aud
     const token = await this.jwtService.signAsync({
       id: data.id,
       name: data.name,

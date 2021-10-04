@@ -43,6 +43,7 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
+  // REVU: Кажется что без гварда, тут кто-угодно может получить информацию о всех юзерах
   @ApiOperation({
     summary: "Get Users",
     description: "Get all users with events",
@@ -59,6 +60,7 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  // REVU: Кажется что без гварда, тут кто-угодно может получить информацию о любом юзере
   @ApiOperation({
     summary: "Get User",
     description: "Get user by id",

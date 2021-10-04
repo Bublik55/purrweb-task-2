@@ -10,6 +10,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     super();
   }
 
+  // REVU: Это точно работает?
   async validate(loginDto: LoginDto): Promise<any> {
     const user = await this.authService.validateUser(
       loginDto.name,

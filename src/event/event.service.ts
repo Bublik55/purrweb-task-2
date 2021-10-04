@@ -24,9 +24,9 @@ export class EventService {
 
   async create(createEventDto: CreateEventDto) {
     const event = new Event();
-    ///
     event.title = createEventDto.title;
     const user = await this.userRepository.findOne(createEventDto.userId);
+    // REVU: ?????
     event.author = Promise.resolve(user);
     if (user) return this.eventRepository.save(event);
     else throw new BadRequestException();
@@ -53,6 +53,9 @@ export class EventService {
     if (updateEventDto.title) {
       event.title = updateEventDto.title;
     }
+
+    // REVU: можно просто использовать displays: [{ id: id1 }, { id: id2 }]
+    // Для чего используется Promise.resolve? нужен ли он здесь?
     updateEventDto.displays.forEach(async (element) => {
       const display = await this.displayRepository.findOne(element);
       (await event.displays).push(await Promise.resolve(display));
