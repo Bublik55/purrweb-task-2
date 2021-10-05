@@ -1,12 +1,8 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Event } from "src/event/entities/event.entity";
-import { Playlist } from "src/playlist/entities/playlist.entity";
-import { User } from "src/user/entities/user.entity";
+import { EventService } from "src/event/event.service";
+import { PlaylistService } from "src/playlist/playlist.service";
+import { UserService } from "src/user/user.service";
 import { Repository } from "typeorm";
 import { CreateDisplayDto } from "./dto/create-display.dto";
 import { UpdateDisplayDto } from "./dto/update-display.dto";
@@ -17,25 +13,19 @@ export class DisplayService {
   constructor(
     @InjectRepository(Display)
     private displayRepository: Repository<Display>,
-    @InjectRepository(Event)
-    private eventRepository: Repository<Event>,
-    @InjectRepository(Playlist)
-    private playlistRepository: Repository<Playlist>,
-    @InjectRepository(User)
-    private userRepository: Repository<User>
+    private userService: UserService,
+    private playlistService: PlaylistService,
+    private eventService: EventService
   ) {}
 
-  async create(createDisplayDto: CreateDisplayDto) {
-    const event = await this.eventRepository.findOne(createDisplayDto.eventId);
-    //throw exceptyion if event no exists
-    const user = this.userRepository.findOne(createDisplayDto.authorId);
+  async create(dto: CreateDisplayDto) {
     const display = new Display();
-    display.event = Promise.resolve(event);
-    display.authorId = (await Promise.resolve(user)).id;
+    display.author = await this.userService.findOneById(dto.authorId);
+    display.event = await this.eventService.findOne(+dto.eventId);
+    display.playlist = await this.playlistService.findOne(+dto.playlistId);
     return await this.displayRepository.save(display);
   }
 
-  //Return all displays of event
   async findAll() {
     return await this.displayRepository.find({
       relations: ["event", "author"],
@@ -46,21 +36,20 @@ export class DisplayService {
     const display = await this.displayRepository.findOne(id, {
       relations: ["event", "author"],
     });
-    if (display) return display;
-    else throw new NotFoundException(`Cannot find display with id ${id}`);
+    return display;
   }
 
   //@WARNING attach playlist to display - just one option
   async update(id: number, updateDisplayDto: UpdateDisplayDto) {
-    const playlist = await this.playlistRepository.findOne(
-      +updateDisplayDto.playlistId
-    );
-    const display = await this.displayRepository.findOne(id);
-    display.playlist = playlist;
-    // REVU: Валидировать это в пайпах. Позволить перепривязывать плейлисты к дисплеям
-    return this.displayRepository.save(display).catch(() => {
-      throw new BadRequestException("Playlist has attached to other display");
-    });
+    // const playlist = await this.playlistRepository.findOne(
+    //   +updateDisplayDto.playlistId
+    // );
+    // const display = await this.displayRepository.findOne(id);
+    // display.playlist = playlist;
+    // // REVU: Валидировать это в пайпах. Позволить перепривязывать плейлисты к дисплеям
+    // return this.displayRepository.save(display).catch(() => {
+    //   throw new BadRequestException("Playlist has attached to other display");
+    // });
   }
 
   async remove(id: number) {

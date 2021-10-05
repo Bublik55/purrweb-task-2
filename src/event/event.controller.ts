@@ -12,18 +12,17 @@ import {
 import {
   ApiBearerAuth,
   ApiOperation,
-  ApiProperty,
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { CreatorGuards } from "src/common/guards/creator.guard";
 import { EventOwnerGuard } from "src/auth/guards/owner.guards/event.owner.guard";
+import { CreatorGuards } from "src/common/guards/creator.guard";
+import { GetDisplayDto } from "src/display/dto/get-display.dto";
+import { GetUserDto } from "src/user/dto/get-user.dto";
 import { CreateEventDto } from "./dto/create-event.dto";
+import { GetEventDto } from "./dto/get-event.dto";
 import { UpdateEventDto } from "./dto/update-event.dto";
 import { EventService } from "./event.service";
-import { GetEventDto } from "./dto/get-event.dto";
-import { GetUserDto } from "src/user/dto/get-user.dto";
-import { GetDisplayDto } from "src/display/dto/get-display.dto";
 @ApiBearerAuth()
 @ApiTags("Events")
 @Controller("events")

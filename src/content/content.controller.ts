@@ -34,9 +34,7 @@ export class ContentController {
     summary: "Create content",
     description: "Create content - save url in DB",
   })
-  @ApiProperty({
-    example: Content,
-  })
+  @ApiProperty({ example: Content })
   @ApiResponse({
     status: 201,
     type: Content,

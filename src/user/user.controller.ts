@@ -24,7 +24,7 @@ import { UserGuard } from "./guards/user.guard";
 import { GetUserDto } from "./dto/get-user.dto";
 import { GetEventDto } from "src/event/dto/get-event.dto";
 @ApiBearerAuth()
-@ApiTags("User CRUD")
+@ApiTags("User")
 @Controller("users")
 export class UserController {
   constructor(private readonly userService: UserService) {}
