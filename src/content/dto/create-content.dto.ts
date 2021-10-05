@@ -8,7 +8,7 @@ export class CreateContentDto {
     description: "AuthorId",
     example: "1",
   })
-  userId: string;
+  authorId: string;
 
   @ApiProperty({
     description: "Type of content [PICTURE, HTML, VIDEO, AUDIO]",
@@ -21,5 +21,5 @@ export class CreateContentDto {
     type: String,
     example: "RANDOM PATH",
   })
-  url: string;
+  path: string;
 }

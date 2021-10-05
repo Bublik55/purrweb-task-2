@@ -6,28 +6,26 @@ import {
 import { AuthGuard } from "@nestjs/passport";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Content } from "src/content/entities/content.entity";
-import { Display } from "src/display/entities/display.entity";
-import { Event } from "src/event/entities/event.entity";
 import { Repository } from "typeorm";
-import { UserEntityIds } from "./utills";
+import { UserEntityIds } from "../../../common/utills";
 @Injectable()
-export class DisplayOwnerGuard extends AuthGuard("jwt") {
+export class ContentOwnerGuard extends AuthGuard("jwt") {
   constructor(
-    @InjectRepository(Display)
-    private displayRepository: Repository<Display>
+    @InjectRepository(Content)
+    private contentRepository: Repository<Content>
   ) {
-    super(displayRepository);
+    super(contentRepository);
   }
 
   async canActivate(context: ExecutionContext) {
     const userEntityIds = UserEntityIds(context);
-    const display = await this.displayRepository.findOne(
+    const content = await this.contentRepository.findOne(
       userEntityIds.entityID,
       {
         relations: ["author"],
       }
     );
-    if ((await display.author).id == userEntityIds.userID) {
+    if ((await content.author).id == userEntityIds.userID) {
       return true;
     } else throw new ForbiddenException("Forbidden operation for user");
   }

@@ -16,11 +16,13 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { UserOwnerGuard } from "src/utils/auth/guards/owner.guards/user.owner.guard";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./entities/user.entity";
 import { UserService } from "./user.service";
+import { UserGuard } from "./guards/user.guard";
+import { GetUserDto } from "./dto/get-user.dto";
+import { GetEventDto } from "src/event/dto/get-event.dto";
 @ApiBearerAuth()
 @ApiTags("User CRUD")
 @Controller("users")
@@ -31,16 +33,11 @@ export class UserController {
     summary: "Create User",
     description: "Create user",
   })
-  @ApiProperty({
-    example: User,
-  })
-  @ApiResponse({
-    status: 201,
-    type: User,
-  })
+  @ApiResponse({ status: 201, type: GetUserDto })
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    const user = await this.userService.create(createUserDto);
+    return new GetUserDto(user);
   }
 
   // REVU: Кажется что без гварда, тут кто-угодно может получить информацию о всех юзерах
@@ -48,16 +45,11 @@ export class UserController {
     summary: "Get Users",
     description: "Get all users with events",
   })
-  @ApiProperty({
-    example: [User],
-  })
-  @ApiResponse({
-    status: 200,
-    type: [User],
-  })
+  @ApiResponse({ status: 200, type: [GetUserDto] })
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  async findAll() {
+    const users = await this.userService.findAll();
+    return users.map((user) => new GetUserDto(user));
   }
 
   // REVU: Кажется что без гварда, тут кто-угодно может получить информацию о любом юзере
@@ -66,50 +58,47 @@ export class UserController {
     description: "Get user by id",
   })
   @ApiProperty({ example: User })
-  @ApiResponse({
-    status: 200,
-    type: User,
-  })
+  @ApiResponse({ status: 200, type: GetUserDto })
   @Get(":id")
-  findOne(@Param("id", ParseIntPipe) id: string) {
-    return this.userService.findOne(id);
+  async findOne(@Param("id", ParseIntPipe) id: string) {
+    const user = await this.userService.findOneById(id);
+    return new GetUserDto(user);
   }
 
-  @UseGuards(UserOwnerGuard)
+  @UseGuards(UserGuard)
   @ApiOperation({
     summary: "Update user",
     description: "Update user if user exists",
   })
-  @ApiProperty({
-    example: User,
-  })
-  @ApiResponse({
-    status: 200,
-    type: User,
-  })
+  @ApiResponse({ status: 200 })
   @Patch(":id")
   update(
     @Param("id", ParseIntPipe) id: string,
     @Body() updateUserDto: UpdateUserDto
   ) {
-    return this.userService.update(id, updateUserDto);
+    this.userService.update(id, updateUserDto);
   }
 
-  @UseGuards(UserOwnerGuard)
+  @UseGuards(UserGuard)
   @ApiOperation({
     summary: "Delete user",
-    description:
-      "Delete user and return true. Return false when user don't exists",
+    description: "Delete user",
   })
-  @ApiProperty({
-    example: User,
-  })
-  @ApiResponse({
-    status: 200,
-    type: Boolean,
-  })
+  @ApiResponse({ status: 200 })
   @Delete(":id")
   remove(@Param("id", ParseIntPipe) id: string) {
     return this.userService.remove(id);
+  }
+
+  @ApiOperation({
+    summary: "Delete user",
+    description: "Delete user",
+  })
+  @ApiResponse({ status: 200, type: [GetEventDto] })
+  @Get(":id/events")
+  async getEventsByUser(@Param("id", ParseIntPipe) id: string) {
+    const user = await this.userService.findOneById(id);
+    const events = await user.events;
+    return events.map((event) => new GetEventDto(event));
   }
 }

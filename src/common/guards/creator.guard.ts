@@ -4,7 +4,7 @@ import {
   Injectable,
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
-import { UserDtoIds } from "./owner.guards/utills";
+import { UserDtoIds } from "../utills";
 
 @Injectable()
 export class CreatorGuards extends AuthGuard("jwt") {
@@ -14,7 +14,7 @@ export class CreatorGuards extends AuthGuard("jwt") {
 
   canActivate(context: ExecutionContext) {
     const udi = UserDtoIds(context);
-    if (udi.userDtoId == udi.userID) {
+    if (udi.userDtoId == udi.authorId) {
       return true;
     } else
       throw new ForbiddenException(

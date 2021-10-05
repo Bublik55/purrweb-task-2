@@ -1,5 +1,4 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumberString } from "class-validator";
 import { Display } from "src/display/entities/display.entity";
 import { User } from "src/user/entities/user.entity";
 import {
@@ -19,7 +18,6 @@ export class Event {
     example: "98",
     type: String,
   })
-  @IsNumberString()
   @PrimaryGeneratedColumn()
   id: string;
 
@@ -43,6 +41,8 @@ export class Event {
   @JoinTable()
   author: Promise<User>;
 
+  @Column()
+  authorId: string;
   @ApiProperty({
     description: "Event`s displays",
     example: Display,

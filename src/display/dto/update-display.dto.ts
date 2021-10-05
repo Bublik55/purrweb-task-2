@@ -10,5 +10,5 @@ export class UpdateDisplayDto extends CreateDisplayDto {
   })
   @IsNumberString()
   // REVU: playlistId, и логичнее передавать массивом несколько айдишников
-  playlist: string;
+  playlistId: string;
 }

@@ -1,5 +1,4 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString } from "class-validator";
 import { ContentToPlaylist } from "src/playlist/entities/content-to-playlist.entity";
 import { User } from "src/user/entities/user.entity";
 import {
@@ -29,7 +28,6 @@ export class Content {
 
   @ApiProperty({
     description: `Type of content`,
-    // type: CONTENT_TYPE,
     example: CONTENT_TYPE,
   })
   @Column("enum", { enum: CONTENT_TYPE })
@@ -40,7 +38,6 @@ export class Content {
     type: String,
     example: "RANDOMURL",
   })
-  @IsString()
   @Column("text", { unique: true })
   path: string;
 

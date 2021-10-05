@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Display } from "src/display/entities/display.entity";
 import { User } from "src/user/entities/user.entity";
@@ -23,13 +19,7 @@ export class EventService {
   ) {}
 
   async create(createEventDto: CreateEventDto) {
-    const event = new Event();
-    event.title = createEventDto.title;
-    const user = await this.userRepository.findOne(createEventDto.userId);
-    // REVU: ?????
-    event.author = Promise.resolve(user);
-    if (user) return this.eventRepository.save(event);
-    else throw new BadRequestException();
+    return this.eventRepository.save(createEventDto);
   }
 
   async findAll() {
@@ -42,8 +32,7 @@ export class EventService {
     const event = await this.eventRepository.findOne(id, {
       relations: ["author", "displays"],
     });
-    if (event) return event;
-    else throw new NotFoundException(`Cannot find event with id ${id}`);
+    return event;
   }
 
   async update(id: number, updateEventDto: UpdateEventDto) {
@@ -53,14 +42,13 @@ export class EventService {
     if (updateEventDto.title) {
       event.title = updateEventDto.title;
     }
-
     // REVU: можно просто использовать displays: [{ id: id1 }, { id: id2 }]
     // Для чего используется Promise.resolve? нужен ли он здесь?
-    updateEventDto.displays.forEach(async (element) => {
+    updateEventDto.displayIds.forEach(async (element) => {
       const display = await this.displayRepository.findOne(element);
-      (await event.displays).push(await Promise.resolve(display));
+      (await event.displays).push(display);
     });
-    return await this.eventRepository.save(event);
+    return await this.eventRepository.update(id, event);
   }
 
   async remove(id: number) {

@@ -15,8 +15,8 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { CreatorGuards } from "src/utils/auth/guards/creator.guard";
-import { DisplayOwnerGuard } from "src/utils/auth/guards/owner.guards/display.owner.guard";
+import { CreatorGuards } from "src/common/guards/creator.guard";
+import { DisplayOwnerGuard } from "src/auth/guards/owner.guards/display.owner.guard";
 import { DisplayService } from "./display.service";
 import { CreateDisplayDto } from "./dto/create-display.dto";
 import { UpdateDisplayDto } from "./dto/update-display.dto";

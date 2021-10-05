@@ -1,5 +1,4 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsNumberString, IsString } from "class-validator";
 import { Event } from "src/event/entities/event.entity";
 import {
   Column,
@@ -15,7 +14,6 @@ export class User {
     example: "1",
     type: String,
   })
-  @IsNumberString()
   @PrimaryGeneratedColumn()
   id: string;
 
@@ -24,16 +22,14 @@ export class User {
     example: "Bob",
     type: String,
   })
-  @IsString()
   @Column("text", { unique: true })
-  name: string;
+  username: string;
 
   @ApiProperty({
     description: "HASHED User's password",
     example: "Awesomepasswd_hash",
     type: String,
   })
-  @IsString()
   @Column("text")
   password!: string;
 
@@ -42,7 +38,6 @@ export class User {
     example: "Awesome@some.me",
     type: String,
   })
-  @IsEmail()
   @Column("text", { unique: true })
   email!: string;
 

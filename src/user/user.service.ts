@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -16,64 +12,34 @@ export class UserService {
     private userRepository: Repository<User>
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
-    const user = new User();
-    user.email = createUserDto.email;
-    user.name = createUserDto.name;
-    user.password = createUserDto.password;
-    try {
-      await this.userRepository.save(user);
-      return user;
-    } catch (error) {
-      // REVU: Это должно валидироваться в папйпах, будет правльнее если из бизнесс логики не будут выбрасывать исключения
-      throw new BadRequestException("Email or Login already exists");
-    }
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    return this.userRepository.save(createUserDto);
   }
 
-  // REVU: User'ы отдаются с паролями
-  async findAll() {
-    return await this.userRepository.find({
-      relations: ["events", "events.displays"],
-    });
+  async findAll(): Promise<User[]> {
+    return this.userRepository.find();
   }
 
-  async findOneByName(name: string) {
-    const user: User = await this.userRepository.findOne({
-      where: { name: name },
-    });
-    if (user) return user;
-    // REVU: Это должно валидироваться в папйпах, будет правльнее если из бизнесс логики не будут выбрасывать исключения
-    else throw new NotFoundException(`Cannot find user with name ${name}`);
+  async findOneByName(username: string): Promise<User> {
+    return this.userRepository.findOne(username);
   }
 
-  async findOne(id: string) {
+  async findEventsByUserId(id: string) {
     const user = await this.userRepository.findOne(id, {
-      relations: ["events", "events.displays"],
+      relations: ["events"],
     });
-    if (user) return user;
-    // REVU: Это должно валидироваться в папйпах, будет правльнее если из бизнесс логики не будут выбрасывать исключения
-    else throw new NotFoundException(`Cannot find user with id ${id}`);
+    return user.events;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    try {
-      const user = await this.userRepository.findOne(id);
-      user.name = updateUserDto.name;
-      user.password = updateUserDto.password;
-      // REVU: ?????
-      user.email = user.email;
-
-      //REVU: userRepository.update({ id }, updateUserDto)
-      const ret = await this.userRepository.save(user);
-      return ret;
-    } catch (error) {
-      throw new BadRequestException("Name/Password already exists");
-    }
+  async findOneById(id: string): Promise<User> {
+    return this.userRepository.findOne(id);
   }
 
-  async remove(id: string) {
-    const user = await this.userRepository.delete(id);
-    if (user.affected) return true;
-    else return false;
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<void> {
+    await this.userRepository.update({ id }, updateUserDto);
+  }
+
+  async remove(id: string): Promise<void> {
+    await this.userRepository.delete(id);
   }
 }

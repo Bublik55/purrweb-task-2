@@ -18,7 +18,7 @@ export class CreatePlaylistDto {
     example: "1",
   })
   @IsNumberString()
-  userId: string;
+  authorId: string;
 
   @ApiProperty({
     description: "This contain array of [contentId, order, duration]",

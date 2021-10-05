@@ -6,7 +6,7 @@ export class UpdateEventDto extends CreateEventDto {
     description: "displays ids as attachment",
     example: ["1", "2", "3"],
   })
-  displays: string[];
+  displayIds: string[];
 
   @ApiProperty({
     description: "new title for event",

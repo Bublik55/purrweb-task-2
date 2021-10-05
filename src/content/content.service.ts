@@ -23,8 +23,8 @@ export class ContentService {
     if (!content.contentType)
       throw new BadRequestException("Bad Format of `Content Type`");
 
-    content.path = createContentDto.url;
-    content.authorId = createContentDto.userId;
+    content.path = createContentDto.path;
+    content.authorId = createContentDto.authorId;
     return await this.contentRepository.save(content).catch(() => {
       throw new BadRequestException(
         `Content with path ${content.path} already exists`
@@ -48,7 +48,7 @@ export class ContentService {
     const obj = await this.contentRepository.findOne(id);
     if (!obj)
       throw new NotFoundException(`Content with id = ${id} does not exists`);
-    obj.path = updateContentDto.url;
+    obj.path = updateContentDto.path;
     obj.contentType = CONTENT_TYPE[updateContentDto.contentType.toUpperCase()];
     return await this.contentRepository.update(id, obj);
   }

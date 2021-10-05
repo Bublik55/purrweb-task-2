@@ -14,8 +14,8 @@ const UserEntityIds = (context: ExecutionContext) => {
 const UserDtoIds = (context: ExecutionContext) => {
   const [req] = context.getArgs();
   return {
-    userDtoId: req.body.userId,
-    userID: req.user.id,
+    userDtoId: req.body.authorId,
+    authorId: req.user.id,
   };
 };
 

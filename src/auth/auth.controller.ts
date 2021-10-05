@@ -3,7 +3,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { CreateUserDto } from "src/user/dto/create-user.dto";
 import { AuthService } from "./auth.service";
 import { LoginDto } from "./dto/login.dto";
-import { Public } from "./guards/jwt-auth.guard";
+import { Public } from "../common/guards/jwt-auth.guard";
 import { LocalStrategy } from "./strategies/local.strategy";
 
 @Public()

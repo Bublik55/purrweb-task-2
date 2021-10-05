@@ -30,7 +30,7 @@ export class PlaylistService {
     let ret: Promise<Playlist>;
     let playlist = await new Playlist();
     let display: Display;
-    playlist.authorId = createPlaylistDto.userId;
+    playlist.authorId = createPlaylistDto.authorId;
     this.checkOrder(createPlaylistDto.content);
     try {
       display = await this.displayRepository.findOneOrFail(

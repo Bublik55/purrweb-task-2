@@ -14,5 +14,5 @@ export class CreateDisplayDto {
     example: "2",
   })
   @IsNumberString()
-  userId: string;
+  authorId: string;
 }

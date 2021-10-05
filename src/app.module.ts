@@ -9,8 +9,8 @@ import { DisplayModule } from "./display/display.module";
 import { EventModule } from "./event/event.module";
 import { PlaylistModule } from "./playlist/playlist.module";
 import { UserModule } from "./user/user.module";
-import { AuthModule } from "./utils/auth/auth.module";
-import { JwtAuthGuard } from "./utils/auth/guards/jwt-auth.guard";
+import { AuthModule } from "./auth/auth.module";
+import { JwtAuthGuard } from "./common/guards/jwt-auth.guard";
 
 @Module({
   imports: [

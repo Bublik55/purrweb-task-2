@@ -1,5 +1,4 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumberString } from "class-validator";
 import { Content } from "src/content/entities/content.entity";
 import {
   Column,
@@ -26,7 +25,6 @@ export class ContentToPlaylist {
     type: String,
   })
   @Column()
-  @IsNumberString()
   playlistId: string;
 
   @ApiProperty({
@@ -35,7 +33,6 @@ export class ContentToPlaylist {
     type: String,
   })
   @Column()
-  @IsNumberString()
   contentId: string;
 
   @ApiProperty({
@@ -65,7 +62,6 @@ export class ContentToPlaylist {
     example: "2.43",
     type: String,
   })
-  @IsNumberString()
   @Column("real")
   duration: string;
 
@@ -74,7 +70,6 @@ export class ContentToPlaylist {
     example: "2",
     type: String,
   })
-  @IsNumberString()
   @Column()
   order: string;
 }

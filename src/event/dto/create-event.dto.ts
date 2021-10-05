@@ -6,7 +6,7 @@ export class CreateEventDto {
     type: String,
     example: "1",
   })
-  userId: string;
+  authorId: string;
 
   @ApiProperty({
     description: "Title of event",

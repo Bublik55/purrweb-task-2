@@ -28,7 +28,7 @@ export class DisplayService {
   async create(createDisplayDto: CreateDisplayDto) {
     const event = await this.eventRepository.findOne(createDisplayDto.eventId);
     //throw exceptyion if event no exists
-    const user = this.userRepository.findOne(createDisplayDto.userId);
+    const user = this.userRepository.findOne(createDisplayDto.authorId);
     const display = new Display();
     display.event = Promise.resolve(event);
     display.authorId = (await Promise.resolve(user)).id;
@@ -53,7 +53,7 @@ export class DisplayService {
   //@WARNING attach playlist to display - just one option
   async update(id: number, updateDisplayDto: UpdateDisplayDto) {
     const playlist = await this.playlistRepository.findOne(
-      +updateDisplayDto.playlist
+      +updateDisplayDto.playlistId
     );
     const display = await this.displayRepository.findOne(id);
     display.playlist = playlist;

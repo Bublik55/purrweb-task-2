@@ -7,7 +7,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Event } from "src/event/entities/event.entity";
 import { Repository } from "typeorm";
-import { UserEntityIds } from "./utills";
+import { UserEntityIds } from "../../../common/utills";
 @Injectable()
 export class EventOwnerGuard extends AuthGuard("jwt") {
   constructor(

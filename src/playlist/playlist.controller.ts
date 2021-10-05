@@ -15,8 +15,8 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { CreatorGuards } from "src/utils/auth/guards/creator.guard";
-import { PlaylistOwnerGuard } from "src/utils/auth/guards/owner.guards/playlist.owner.guard";
+import { CreatorGuards } from "src/common/guards/creator.guard";
+import { PlaylistOwnerGuard } from "src/auth/guards/owner.guards/playlist.owner.guard";
 import { CreatePlaylistDto } from "./dto/create-playlist.dto";
 import { UpdatePlaylistDto } from "./dto/update-playlist.dto";
 import { Playlist } from "./entities/playlist.entity";
