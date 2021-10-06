@@ -15,7 +15,7 @@ export class Display {
   id: string;
 
   @OneToOne(() => Playlist, (playlist) => playlist.display, {
-    eager: true,
+    lazy: true,
     onDelete: "NO ACTION",
     nullable: true,
     cascade: ["insert"],

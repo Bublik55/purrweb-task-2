@@ -4,9 +4,8 @@ import { Display } from "../entities/display.entity";
 export class GetDisplayDto {
   constructor(display: Display) {
     this.id = display.id;
-    this.playlistId = display.playlist.id;
-    this.eventId = display.event.id;
-    this.playlistId = display.playlist.id;
+    this.eventId = display["__event__"].id;
+    this.authorId = display["__author__"].id;
   }
   @ApiProperty()
   id: string;
@@ -16,7 +15,4 @@ export class GetDisplayDto {
 
   @ApiProperty()
   eventId: string;
-
-  @ApiProperty()
-  playlistId: string;
 }

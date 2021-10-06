@@ -12,19 +12,20 @@ import {
 import {
   ApiBearerAuth,
   ApiOperation,
-  ApiProperty,
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { CreatorGuards } from "src/common/guards/creator.guard";
 import { DisplayOwnerGuard } from "src/auth/guards/owner.guards/display.owner.guard";
+import { CreatorGuards } from "src/common/guards/creator.guard";
+import { DisplayExistsPipe } from "src/common/pipes/display-exists.pipe";
+import { GetEventDto } from "src/event/dto/get-event.dto";
+import { GetPlaylistDto } from "src/playlist/dto/get-playlist.dto";
+import { GetUserDto } from "src/user/dto/get-user.dto";
 import { DisplayService } from "./display.service";
 import { CreateDisplayDto } from "./dto/create-display.dto";
+import { GetDisplayDto } from "./dto/get-display.dto";
 import { UpdateDisplayDto } from "./dto/update-display.dto";
-import { Display } from "./entities/display.entity";
-import { GetEventDto } from "src/event/dto/get-event.dto";
-import { GetUserDto } from "src/user/dto/get-user.dto";
-import { GetPlaylistDto } from "src/playlist/dto/get-playlist.dto";
+import { CreateDisplayPipe } from "./pipes/create-display.pipe";
 @ApiBearerAuth()
 @ApiTags("Display")
 @Controller("displays")
@@ -34,107 +35,81 @@ export class DisplayController {
   @UseGuards(CreatorGuards)
   @ApiOperation({
     summary: "Create display",
-    description:
-      "Create display and attach user to it. Attach display to event",
+    description: "Create display and attach to event",
   })
-  @ApiProperty({
-    example: Display,
-  })
-  @ApiResponse({
-    status: 201,
-    type: Display,
-  })
+  @ApiResponse({ status: 201, type: GetDisplayDto })
   @Post()
-  create(@Body() createDisplayDto: CreateDisplayDto) {
-    return this.displayService.create(createDisplayDto);
+  async create(@Body(CreateDisplayPipe) createDisplayDto: CreateDisplayDto) {
+    const obj = await this.displayService.create(createDisplayDto);
+    return new GetDisplayDto(obj);
   }
 
   @ApiOperation({
     summary: "Return all displays",
-    description: "Return displays with author, event, playlist",
+    description: "Return displays with author, event",
   })
-  @ApiResponse({
-    status: 200,
-    type: [Display],
-  })
+  @ApiResponse({ status: 200, type: [GetDisplayDto] })
   @Get()
-  findAll() {
-    return this.displayService.findAll();
+  async findAll() {
+    const obj = await this.displayService.findAll();
+    return obj.map((e) => new GetDisplayDto(e));
   }
 
   @ApiOperation({
     summary: "Return Display by ID",
-    description: "Return displays with author, event, playlist",
+    description: "Return displays",
   })
   @ApiResponse({
     status: 200,
-    type: [Display],
+    type: [GetDisplayDto],
   })
   @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.displayService.findOne(+id);
+  async findOne(@Param("id", ParseIntPipe) id: string) {
+    const obj = await this.displayService.findOne(+id);
+    return new GetDisplayDto(obj);
   }
 
   @UseGuards(DisplayOwnerGuard)
   @ApiOperation({
     summary: "Update Display by ID",
-    description: "Attach playlist to display",
+    description: "Attach Display to other event",
   })
-  @ApiResponse({
-    status: 200,
-    type: Display,
-  })
+  @ApiResponse({ status: 200 })
   @Patch(":id")
   update(@Param("id") id: string, @Body() updateDisplayDto: UpdateDisplayDto) {
-    return this.displayService.update(+id, updateDisplayDto);
+    this.displayService.update(+id, updateDisplayDto);
   }
 
   @UseGuards(DisplayOwnerGuard)
-  @ApiOperation({
-    summary: "Delete display",
-    description:
-      "Delete display and return true. Return false when display dont exists",
-  })
-  @ApiResponse({
-    status: 200,
-    type: Boolean,
-  })
+  @ApiOperation({ summary: "Delete display" })
+  @ApiResponse({ status: 200 })
   @Delete(":id")
   async remove(@Param("id") id: string) {
     await this.displayService.remove(+id);
   }
 
   @ApiOperation({ summary: "Get event by display" })
-  @ApiResponse({
-    status: 200,
-    type: GetEventDto,
-  })
+  @ApiResponse({ status: 200, type: GetEventDto })
   @Get(":id/event")
-  async getEventByDisplay(@Param("id", ParseIntPipe) id: string) {
+  async getEventByDisplay(@Param("id", DisplayExistsPipe) id: string) {
     const display = await this.displayService.findOne(+id);
     const event = display.event;
     return new GetEventDto(event);
   }
 
   @ApiOperation({ summary: "Get Author/owner of display" })
-  @ApiResponse({
-    status: 200,
-    type: GetUserDto,
-  })
+  @ApiResponse({ status: 200, type: GetUserDto })
   @Get(":id/user")
-  async getUserByDisplay(@Param("id", ParseIntPipe) id: string) {
+  async getUserByDisplay(@Param("id", DisplayExistsPipe) id: string) {
     const display = await this.displayService.findOne(+id);
     const user = display.author;
     return new GetUserDto(user);
   }
 
   @ApiOperation({ summary: "Get Playlist by Display" })
-  @ApiResponse({
-    status: 200,
-    type: GetPlaylistDto,
-  })
+  @ApiResponse({ status: 200, type: GetPlaylistDto })
   @Get(":id/playlist")
-  async getPlaylistByDisplay(@Param("id", ParseIntPipe) id: string) {
+  async getPlaylistByDisplay(@Param("id", DisplayExistsPipe) id: string) {
     const display = await this.displayService.findOne(+id);
     const playlist = display.playlist;
     return new GetPlaylistDto(playlist);

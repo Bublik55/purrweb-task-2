@@ -21,6 +21,7 @@ import { ContentService } from "./content.service";
 import { CreateContentDto } from "./dto/create-content.dto";
 import { GetContentDto } from "./dto/get-content.dto";
 import { UpdateContentDto } from "./dto/update-content.dto";
+import { ContentExistPipe } from "../common/pipes/content-exists.pipe";
 
 @ApiBearerAuth()
 @ApiTags("Content crud")
@@ -33,34 +34,22 @@ export class ContentController {
     summary: "Create content",
     description: "Create content - save url in DB",
   })
-  @ApiResponse({
-    status: 201,
-    type: GetContentDto,
-  })
+  @ApiResponse({ status: 201, type: GetContentDto })
   @Post()
   async create(@Body() createContentDto: CreateContentDto) {
     const obj = await this.contentService.create(createContentDto);
     return new GetContentDto(obj);
   }
 
-  @ApiOperation({
-    summary: "Return  contents",
-    description: "Return contents with authors",
-  })
-  @ApiResponse({
-    status: 200,
-    type: [GetContentDto],
-  })
+  @ApiOperation({ summary: "Return  contents" })
+  @ApiResponse({ status: 200, type: [GetContentDto] })
   @Get()
   async findAll() {
     const obj = await this.contentService.findAll();
     return obj.map((content) => new GetContentDto(content));
   }
 
-  @ApiOperation({
-    summary: "Return  content by ID",
-    description: "Return content with author",
-  })
+  @ApiOperation({ summary: "Return  content by ID" })
   @ApiResponse({ status: 200, type: GetContentDto })
   @Get(":id")
   async findOne(@Param("id", ParseIntPipe) id: string) {
@@ -76,7 +65,7 @@ export class ContentController {
   @ApiResponse({ status: 200 })
   @Patch(":id")
   update(
-    @Param("id", ParseIntPipe) id: string,
+    @Param("id", ParseIntPipe, ContentExistPipe) id: string,
     @Body() updateContentDto: UpdateContentDto
   ) {
     this.contentService.update(+id, updateContentDto);

@@ -26,7 +26,7 @@ import { UserGuard } from "./guards/user.guard";
 import { GetUserDto } from "./dto/get-user.dto";
 import { GetEventDto } from "src/event/dto/get-event.dto";
 import { CreateUserPipe } from "./pipes/creat-user.pipe";
-import { UserExistsPipe } from "./pipes/user-exists.pipe";
+import { UserExistsPipe } from "../common/pipes/user-exists.pipe";
 @ApiBearerAuth()
 @ApiTags("User")
 @Controller("users")

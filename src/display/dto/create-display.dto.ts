@@ -17,8 +17,4 @@ export class CreateDisplayDto {
   })
   @IsDecimal()
   eventId: string;
-
-  @ApiProperty()
-  @IsDecimal()
-  playlistId: string;
 }
