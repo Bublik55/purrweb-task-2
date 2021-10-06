@@ -15,6 +15,7 @@ export class ContentToPlaylist {
 
   @ManyToOne(() => Playlist, (playlist) => playlist.contentToPlaylist, {
     onDelete: "CASCADE",
+    cascade: ["insert", "update"],
   })
   playlist: Playlist;
 

@@ -1,14 +1,9 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Content } from "src/content/entities/content.entity";
-import { Display } from "src/display/entities/display.entity";
 import { Repository } from "typeorm";
 import { ContentToPlaylistDto } from "./dto/content-to-playlist.dto";
 import { CreatePlaylistDto } from "./dto/create-playlist.dto";
+import { UpdateContentToPlaylistDto } from "./dto/update-contentToPlaylist.dto";
 import { UpdatePlaylistDto } from "./dto/update-playlist.dto";
 import { ContentToPlaylist } from "./entities/content-to-playlist.entity";
 import { Playlist } from "./entities/playlist.entity";
@@ -16,14 +11,10 @@ import { Playlist } from "./entities/playlist.entity";
 @Injectable()
 export class PlaylistService {
   constructor(
-    @InjectRepository(Display)
-    private displayRepository: Repository<Display>,
-    @InjectRepository(ContentToPlaylist)
-    private contentToPlayListRepository: Repository<ContentToPlaylist>,
     @InjectRepository(Playlist)
     private playlistRepository: Repository<Playlist>,
-    @InjectRepository(Content)
-    private contentRepository: Repository<Content>
+    @InjectRepository(ContentToPlaylist)
+    private contentToPlayListRepository: Repository<ContentToPlaylist>
   ) {}
 
   async create(dto: CreatePlaylistDto) {
@@ -46,20 +37,6 @@ export class PlaylistService {
     return `This action removes a #${id} playlist`;
   }
 
-  async ContentToPlayistFromDto(
-    dto: ContentToPlaylistDto,
-    playlistId: string
-  ): Promise<ContentToPlaylist> {
-    const ret = new ContentToPlaylist();
-    this.validateContentToPlaylistDto(dto).catch();
-    ret.order = dto.order;
-    ret.duration = dto.duration;
-    ret.contentId = dto.contentId;
-    ret.playlistId = playlistId;
-    ret.content = await this.contentRepository.findOne(dto.contentId);
-    return this.contentToPlayListRepository.save(ret);
-  }
-
   /**** */
   checkOrder(dto: ContentToPlaylistDto[]) {
     const max = dto.length;
@@ -76,12 +53,40 @@ export class PlaylistService {
       throw new BadRequestException("Bad order");
   }
 
-  async validateContentToPlaylistDto(dto: ContentToPlaylistDto) {
-    const ret = await this.contentRepository.findOne(dto.contentId);
-    if (ret) return ret;
-    else
-      throw new NotFoundException(
-        `Content with id = ${dto.contentId} don't exist`
-      );
+  async updateContentToPlaylist(id, dto: UpdateContentToPlaylistDto) {
+    const playlist: Playlist = await this.playlistRepository.findOne(id);
+    await this.flexPlaylist(dto, playlist);
+    //  return this.playlistRepository.save(playlist);
+  }
+
+  async flexPlaylist(dto: UpdateContentToPlaylistDto, playlist: Playlist) {
+    const ctp = await this.contentToPlayListRepository.findOne(
+      dto.contentToPlaylistId
+    );
+    if (dto.duration) ctp.duration = dto.duration;
+    if (dto.order) {
+      const oldOrder = +ctp.order;
+      const newOrder = +dto.order;
+      console.log(oldOrder, newOrder);
+
+      ctp.order = dto.order;
+      playlist.contentToPlaylist.map((cur) => {
+        if (newOrder < oldOrder)
+          if (+cur.order >= newOrder && +cur.order < oldOrder) {
+            cur.order = String(+cur.order + 1);
+            console.log("          33333333332");
+          }
+        if (newOrder > oldOrder) {
+          if (+cur.order <= newOrder && +cur.order > oldOrder) {
+            cur.order = String(+cur.order - 1);
+            console.log("          22222222");
+          }
+        }
+        this.contentToPlayListRepository.save(cur);
+        console.log(cur.order);
+        return cur;
+      });
+      this.contentToPlayListRepository.save(ctp);
+    }
   }
 }

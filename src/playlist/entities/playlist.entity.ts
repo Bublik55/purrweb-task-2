@@ -28,19 +28,22 @@ export class Playlist {
 
   @OneToOne(() => Display, (display) => display.playlist, {
     lazy: true,
-    cascade: ['insert'],
+    cascade: true,
     onDelete: "SET NULL",
+    nullable: true,
   })
   @JoinColumn()
   display: Display;
-
+  @Column({ nullable: true })
+  displayId: string;
   @OneToMany(
     () => ContentToPlaylist,
     (contentToPlaylist) => contentToPlaylist.playlist,
     {
       eager: true,
-      cascade: true,
+      onDelete: "SET NULL",
       nullable: true,
+      cascade: true,
     }
   )
   @JoinColumn()

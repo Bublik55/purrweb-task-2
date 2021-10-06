@@ -4,20 +4,23 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
+  Put,
   UseGuards,
 } from "@nestjs/common";
 import {
   ApiBearerAuth,
   ApiOperation,
-  ApiProperty,
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { CreatorGuards } from "src/common/guards/creator.guard";
 import { PlaylistOwnerGuard } from "src/auth/guards/owner.guards/playlist.owner.guard";
+import { CreatorGuards } from "src/common/guards/creator.guard";
 import { CreatePlaylistDto } from "./dto/create-playlist.dto";
+import { GetPlaylistDto } from "./dto/get-playlist.dto";
+import { UpdateContentToPlaylistDto } from "./dto/update-contentToPlaylist.dto";
 import { UpdatePlaylistDto } from "./dto/update-playlist.dto";
 import { Playlist } from "./entities/playlist.entity";
 import { PlaylistService } from "./playlist.service";
@@ -33,74 +36,71 @@ export class PlaylistController {
     description:
       "Create Playlist. Attach Playlist To Display.Fill playlist with content",
   })
-  @ApiProperty({
-    example: Playlist,
-  })
-  @ApiResponse({
-    status: 201,
-    type: Playlist,
-  })
+  @ApiResponse({ status: 201, type: GetPlaylistDto })
   @Post()
   async create(@Body() createPlaylistDto: CreatePlaylistDto) {
-    return await this.playlistService.create(createPlaylistDto);
+    const playlist = await this.playlistService.create(createPlaylistDto);
+    return new GetPlaylistDto(playlist);
   }
 
   @ApiOperation({
-    summary: "Return  playlists",
-    description: "Return playlists with authors",
+    summary: "Get playlists",
+    description: "Return playlists",
   })
-  @ApiResponse({
-    status: 200,
-    type: [Playlist],
-  })
+  @ApiResponse({ status: 200, type: [GetPlaylistDto] })
   @Get()
   async findAll() {
     const ret: Playlist[] = await this.playlistService.findAll();
-    return ret;
+    return ret.map((pl) => new GetPlaylistDto(pl));
   }
 
   @ApiOperation({
-    summary: "Return  playlist by ID",
+    summary: "Get playlist by ID",
     description: "Return playlist",
   })
   @ApiResponse({
     status: 200,
-    type: Playlist,
+    type: GetPlaylistDto,
   })
   @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.playlistService.findOne(+id);
+  async findOne(@Param("id") id: string) {
+    const obj = await this.playlistService.findOne(+id);
+    return new GetPlaylistDto(obj);
   }
 
   @UseGuards(PlaylistOwnerGuard)
   @ApiOperation({
     summary: "Update playlist by ID",
-    description: "Set new order and duration  of contentToPlaylist",
+    description: "Set new order and/or duration of contentToPlaylist",
   })
-  @ApiResponse({
-    status: 200,
-    type: Playlist,
-  })
+  @ApiResponse({ status: 200 })
   @Patch(":id")
-  update(
-    @Param("id") id: string,
-    @Body() updatePlaylistDto: UpdatePlaylistDto
-  ) {
-    return this.playlistService.update(+id, updatePlaylistDto);
+  async update(@Param("id") id: string, @Body() dto: UpdatePlaylistDto) {
+    await this.playlistService.update(+id, dto);
   }
 
   @UseGuards(PlaylistOwnerGuard)
   @ApiOperation({
     summary: "Delete playlist",
-    description:
-      "Delete playlist -> return true. Return false when playlist dont exists",
+    description: "Delete playlist",
   })
-  @ApiResponse({
-    status: 200,
-    type: Boolean,
-  })
+  @ApiResponse({ status: 200 })
   @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.playlistService.remove(+id);
+  async remove(@Param("id") id: string) {
+    await this.playlistService.remove(+id);
+  }
+
+  @Put(":id/content")
+  @UseGuards(PlaylistOwnerGuard)
+  @ApiOperation({
+    summary: "Change order and/or duration of content",
+    description: "Change order and/or duration of content",
+  })
+  @ApiResponse({ status: 200 })
+  async setNewDration(
+    @Param("id", ParseIntPipe) id: string,
+    @Body() dto: UpdateContentToPlaylistDto
+  ) {
+    return await this.playlistService.updateContentToPlaylist(id, dto);
   }
 }
