@@ -44,7 +44,7 @@ export class Content {
   @OneToMany(
     () => ContentToPlaylist,
     (contentToPlaylist) => contentToPlaylist.content,
-    { cascade: true }
+    { cascade: true, nullable: true }
   )
   contentToPlaylist: ContentToPlaylist[];
 

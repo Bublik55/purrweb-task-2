@@ -6,9 +6,9 @@ export class GetEventDto {
     this.id = event.id;
     this.title = event.title;
   }
-  @ApiProperty()
+  @ApiProperty({ type: String, example: "1" })
   id: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: String, example: "Common title" })
   title: string;
 }

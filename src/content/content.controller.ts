@@ -12,16 +12,15 @@ import {
 import {
   ApiBearerAuth,
   ApiOperation,
-  ApiProperty,
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { CreatorGuards } from "src/common/guards/creator.guard";
 import { ContentOwnerGuard } from "src/auth/guards/owner.guards/content.owner.guard";
+import { CreatorGuards } from "src/common/guards/creator.guard";
 import { ContentService } from "./content.service";
 import { CreateContentDto } from "./dto/create-content.dto";
+import { GetContentDto } from "./dto/get-content.dto";
 import { UpdateContentDto } from "./dto/update-content.dto";
-import { Content } from "./entities/content.entity";
 
 @ApiBearerAuth()
 @ApiTags("Content crud")
@@ -34,14 +33,14 @@ export class ContentController {
     summary: "Create content",
     description: "Create content - save url in DB",
   })
-  @ApiProperty({ example: Content })
   @ApiResponse({
     status: 201,
-    type: Content,
+    type: GetContentDto,
   })
   @Post()
-  create(@Body() createContentDto: CreateContentDto) {
-    return this.contentService.create(createContentDto);
+  async create(@Body() createContentDto: CreateContentDto) {
+    const obj = await this.contentService.create(createContentDto);
+    return new GetContentDto(obj);
   }
 
   @ApiOperation({
@@ -50,24 +49,23 @@ export class ContentController {
   })
   @ApiResponse({
     status: 200,
-    type: [Content],
+    type: [GetContentDto],
   })
   @Get()
-  findAll() {
-    return this.contentService.findAll();
+  async findAll() {
+    const obj = await this.contentService.findAll();
+    return obj.map((content) => new GetContentDto(content));
   }
 
   @ApiOperation({
     summary: "Return  content by ID",
     description: "Return content with author",
   })
-  @ApiResponse({
-    status: 200,
-    type: Content,
-  })
+  @ApiResponse({ status: 200, type: GetContentDto })
   @Get(":id")
-  findOne(@Param("id", ParseIntPipe) id: string) {
-    return this.contentService.findOne(+id);
+  async findOne(@Param("id", ParseIntPipe) id: string) {
+    const obj = await this.contentService.findOne(+id);
+    return new GetContentDto(obj);
   }
 
   @UseGuards(ContentOwnerGuard)
@@ -75,28 +73,21 @@ export class ContentController {
     summary: "Update content by ID",
     description: "Set new url/path and TYPE of content",
   })
-  @ApiResponse({
-    status: 200,
-    type: Content,
-  })
+  @ApiResponse({ status: 200 })
   @Patch(":id")
   update(
     @Param("id", ParseIntPipe) id: string,
     @Body() updateContentDto: UpdateContentDto
   ) {
-    return this.contentService.update(+id, updateContentDto);
+    this.contentService.update(+id, updateContentDto);
   }
 
   @UseGuards(ContentOwnerGuard)
   @ApiOperation({
     summary: "Delete content",
-    description:
-      "Delete content -> return true. Return false when content dont exists",
+    description: "Delete content",
   })
-  @ApiResponse({
-    status: 200,
-    type: Boolean,
-  })
+  @ApiResponse({ status: 200 })
   @Delete(":id")
   remove(@Param("id", ParseIntPipe) id: string) {
     return this.contentService.remove(id);

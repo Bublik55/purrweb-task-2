@@ -31,7 +31,7 @@ export class PlaylistService {
     let playlist = await new Playlist();
     let display: Display;
     playlist.authorId = createPlaylistDto.authorId;
-    this.checkOrder(createPlaylistDto.content);
+    this.checkOrder(createPlaylistDto.contentToPlaylistDto);
     try {
       display = await this.displayRepository.findOneOrFail(
         +createPlaylistDto.displayId
@@ -49,7 +49,7 @@ export class PlaylistService {
     playlist.contentToPlaylist = [];
     this.displayRepository.save(display);
 
-    createPlaylistDto.content.forEach((element) => {
+    createPlaylistDto.contentToPlaylistDto.forEach((element) => {
       ret = this.ContentToPlayistFromDto(element, playlist.id)
         .then((element) => {
           playlist.contentToPlaylist.push(element);
@@ -57,7 +57,7 @@ export class PlaylistService {
         })
         .catch((err) => {
           throw new NotFoundException(
-            err + `Can't find Content with id = ${element.contentID}`
+            err + `Can't find Content with id = ${element.contentId}`
           );
         });
     });
@@ -94,9 +94,9 @@ export class PlaylistService {
     this.validateContentToPlaylistDto(dto).catch();
     ret.order = dto.order;
     ret.duration = dto.duration;
-    ret.contentId = dto.contentID;
+    ret.contentId = dto.contentId;
     ret.playlistId = playlistId;
-    ret.content = await this.contentRepository.findOne(dto.contentID);
+    ret.content = await this.contentRepository.findOne(dto.contentId);
     return this.contentToPlayListRepository.save(ret);
   }
 
@@ -117,11 +117,11 @@ export class PlaylistService {
   }
 
   async validateContentToPlaylistDto(dto: ContentToPlaylistDto) {
-    const ret = await this.contentRepository.findOne(dto.contentID);
+    const ret = await this.contentRepository.findOne(dto.contentId);
     if (ret) return ret;
     else
       throw new NotFoundException(
-        `Content with id = ${dto.contentID} don't exist`
+        `Content with id = ${dto.contentId} don't exist`
       );
   }
 

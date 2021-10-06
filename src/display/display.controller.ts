@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   UseGuards,
@@ -21,6 +22,9 @@ import { DisplayService } from "./display.service";
 import { CreateDisplayDto } from "./dto/create-display.dto";
 import { UpdateDisplayDto } from "./dto/update-display.dto";
 import { Display } from "./entities/display.entity";
+import { GetEventDto } from "src/event/dto/get-event.dto";
+import { GetUserDto } from "src/user/dto/get-user.dto";
+import { GetPlaylistDto } from "src/playlist/dto/get-playlist.dto";
 @ApiBearerAuth()
 @ApiTags("Display")
 @Controller("displays")
@@ -96,8 +100,43 @@ export class DisplayController {
     type: Boolean,
   })
   @Delete(":id")
-  @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.displayService.remove(+id);
+  async remove(@Param("id") id: string) {
+    await this.displayService.remove(+id);
+  }
+
+  @ApiOperation({ summary: "Get event by display" })
+  @ApiResponse({
+    status: 200,
+    type: GetEventDto,
+  })
+  @Get(":id/event")
+  async getEventByDisplay(@Param("id", ParseIntPipe) id: string) {
+    const display = await this.displayService.findOne(+id);
+    const event = display.event;
+    return new GetEventDto(event);
+  }
+
+  @ApiOperation({ summary: "Get Author/owner of display" })
+  @ApiResponse({
+    status: 200,
+    type: GetUserDto,
+  })
+  @Get(":id/user")
+  async getUserByDisplay(@Param("id", ParseIntPipe) id: string) {
+    const display = await this.displayService.findOne(+id);
+    const user = display.author;
+    return new GetUserDto(user);
+  }
+
+  @ApiOperation({ summary: "Get Playlist by Display" })
+  @ApiResponse({
+    status: 200,
+    type: GetPlaylistDto,
+  })
+  @Get(":id/playlist")
+  async getPlaylistByDisplay(@Param("id", ParseIntPipe) id: string) {
+    const display = await this.displayService.findOne(+id);
+    const playlist = display.playlist;
+    return new GetPlaylistDto(playlist);
   }
 }

@@ -8,7 +8,7 @@ export class ContentToPlaylistDto {
     example: "1",
     type: String,
   })
-  contentID: string;
+  contentId: string;
 
   @IsNumberString()
   @ApiProperty({

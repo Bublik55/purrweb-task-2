@@ -39,17 +39,12 @@ export class DisplayService {
     return display;
   }
 
-  //@WARNING attach playlist to display - just one option
-  async update(id: number, updateDisplayDto: UpdateDisplayDto) {
-    // const playlist = await this.playlistRepository.findOne(
-    //   +updateDisplayDto.playlistId
-    // );
-    // const display = await this.displayRepository.findOne(id);
-    // display.playlist = playlist;
-    // // REVU: Валидировать это в пайпах. Позволить перепривязывать плейлисты к дисплеям
-    // return this.displayRepository.save(display).catch(() => {
-    //   throw new BadRequestException("Playlist has attached to other display");
-    // });
+  async update(id: number, dto: UpdateDisplayDto) {
+    const display = await this.displayRepository.findOne(id);
+    const playlist = await this.playlistService.findOne(+dto.playlistId);
+    display.playlist = playlist;
+    // REVU: Валидировать это в пайпах. Позволить перепривязывать плейлисты к дисплеям
+    return this.displayRepository.update(id, display);
   }
 
   async remove(id: number) {

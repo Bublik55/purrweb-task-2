@@ -14,7 +14,7 @@ export class CreateContentDto {
     description: "Type of content [PICTURE, HTML, VIDEO, AUDIO]",
     example: CONTENT_TYPE.HTML,
   })
-  contentType: string;
+  contentType: CONTENT_TYPE;
 
   @ApiProperty({
     description: "Path to content",

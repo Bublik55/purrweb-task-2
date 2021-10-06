@@ -1,13 +1,9 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreateContentDto } from "./dto/create-content.dto";
 import { UpdateContentDto } from "./dto/update-content.dto";
-import { Content, CONTENT_TYPE } from "./entities/content.entity";
+import { Content } from "./entities/content.entity";
 
 @Injectable()
 export class ContentService {
@@ -17,19 +13,7 @@ export class ContentService {
   ) {}
 
   async create(createContentDto: CreateContentDto) {
-    const content = new Content();
-    content.contentType =
-      CONTENT_TYPE[createContentDto.contentType.toUpperCase()];
-    if (!content.contentType)
-      throw new BadRequestException("Bad Format of `Content Type`");
-
-    content.path = createContentDto.path;
-    content.authorId = createContentDto.authorId;
-    return await this.contentRepository.save(content).catch(() => {
-      throw new BadRequestException(
-        `Content with path ${content.path} already exists`
-      );
-    });
+    return await this.contentRepository.save(createContentDto);
   }
 
   async findAll() {
@@ -37,25 +21,16 @@ export class ContentService {
   }
 
   async findOne(id: number) {
-    const res = await this.contentRepository.findOne(id, {
+    return await this.contentRepository.findOne(id, {
       relations: ["author"],
     });
-    if (res) return res;
-    else throw new NotFoundException(`Content with id = ${id} does not exists`);
   }
 
   async update(id: number, updateContentDto: UpdateContentDto) {
-    const obj = await this.contentRepository.findOne(id);
-    if (!obj)
-      throw new NotFoundException(`Content with id = ${id} does not exists`);
-    obj.path = updateContentDto.path;
-    obj.contentType = CONTENT_TYPE[updateContentDto.contentType.toUpperCase()];
-    return await this.contentRepository.update(id, obj);
+    await this.contentRepository.update(id, updateContentDto);
   }
 
   async remove(id: string) {
-    const user = await this.contentRepository.delete(id);
-    if (user.affected) return true;
-    else return false;
+    await this.contentRepository.delete(id);
   }
 }

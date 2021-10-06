@@ -1,11 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsNumberString } from "class-validator";
+import { IsNumberString } from "class-validator";
 import { ContentToPlaylistDto } from "./content-to-playlist.dto";
 
-const exa: ContentToPlaylistDto = new ContentToPlaylistDto();
-exa.contentID = "1";
-exa.duration = "2.23";
-exa.order = "23";
 export class CreatePlaylistDto {
   @ApiProperty({
     description: "Displayid to attach playlist",
@@ -22,8 +18,8 @@ export class CreatePlaylistDto {
 
   @ApiProperty({
     description: "This contain array of [contentId, order, duration]",
-    example: [exa],
+    example: ContentToPlaylistDto,
     type: [ContentToPlaylistDto],
   })
-  content: ContentToPlaylistDto[];
+  contentToPlaylistDto: ContentToPlaylistDto[];
 }
