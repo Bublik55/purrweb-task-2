@@ -16,11 +16,10 @@ export class Display {
 
   @OneToOne(() => Playlist, (playlist) => playlist.display, {
     eager: true,
-    cascade: true,
-    onDelete: "SET NULL",
+    onDelete: "NO ACTION",
     nullable: true,
+    cascade: ["insert"],
   })
-  @JoinColumn()
   playlist: Playlist;
 
   @ManyToOne(() => Event, (event) => event.displays, {
@@ -28,7 +27,9 @@ export class Display {
     onDelete: "SET NULL",
     nullable: true,
   })
+  @JoinColumn()
   event: Event;
+
   @ManyToOne(() => User, {
     cascade: true,
     onDelete: "CASCADE",

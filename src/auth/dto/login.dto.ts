@@ -7,7 +7,7 @@ export class LoginDto {
     description: "Username",
     example: "Bob",
   })
-  readonly name: string;
+  readonly username: string;
 
   @IsString()
   @ApiProperty({

@@ -3,6 +3,7 @@ import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
 import { User } from "src/user/entities/user.entity";
 import { UserService } from "src/user/user.service";
+import { LoginDto } from "./dto/login.dto";
 
 @Injectable()
 export class AuthService {
@@ -25,9 +26,9 @@ export class AuthService {
     return user.id;
   }
 
-  public async login(loginDto) {
-    const user = await this.userService.findOneByName(loginDto.name);
-    if (await this.validateUser(loginDto.name, loginDto.password)) {
+  public async login(loginDto: LoginDto) {
+    const user = await this.userService.findOneByName(loginDto.username);
+    if (await this.validateUser(loginDto.username, loginDto.password)) {
       const token = await this.generateToken(user);
       return { token };
     } else throw new HttpException("BadRequest", HttpStatus.BAD_REQUEST);

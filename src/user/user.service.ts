@@ -21,7 +21,7 @@ export class UserService {
   }
 
   async findOneByName(username: string): Promise<User> {
-    return this.userRepository.findOne(username);
+    return this.userRepository.findOne({ username: username });
   }
 
   async findEventsByUserId(id: string) {

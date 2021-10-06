@@ -12,8 +12,8 @@ export class ContentService {
     private contentRepository: Repository<Content>
   ) {}
 
-  async create(createContentDto: CreateContentDto) {
-    return await this.contentRepository.save(createContentDto);
+  async create(dto: CreateContentDto) {
+    return await this.contentRepository.save(dto);
   }
 
   async findAll() {
@@ -26,8 +26,8 @@ export class ContentService {
     });
   }
 
-  async update(id: number, updateContentDto: UpdateContentDto) {
-    await this.contentRepository.update(id, updateContentDto);
+  async update(id: number, dto: UpdateContentDto) {
+    await this.contentRepository.update(id, dto);
   }
 
   async remove(id: string) {

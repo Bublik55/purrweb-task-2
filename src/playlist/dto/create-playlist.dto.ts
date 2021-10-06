@@ -21,5 +21,5 @@ export class CreatePlaylistDto {
     example: ContentToPlaylistDto,
     type: [ContentToPlaylistDto],
   })
-  contentToPlaylistDto: ContentToPlaylistDto[];
+  contentToPlaylist: ContentToPlaylistDto[];
 }

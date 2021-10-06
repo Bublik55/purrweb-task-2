@@ -5,7 +5,7 @@ import { ContentToPlaylistDto } from "./content-to-playlist.dto";
 export class GetPlaylistDto {
   constructor(playlist: Playlist) {
     this.id = playlist.id;
-    this.authorId = playlist.authorId;
+    this.authorId = playlist.author.id;
     this.contentToPlaylist = playlist.contentToPlaylist;
   }
 

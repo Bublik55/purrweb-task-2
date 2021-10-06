@@ -42,12 +42,7 @@ export class PlaylistController {
   })
   @Post()
   async create(@Body() createPlaylistDto: CreatePlaylistDto) {
-    const ret = await this.playlistService.create(createPlaylistDto);
-    return {
-      playlistid: ret.id,
-      displayid: (await ret.display).id,
-      contentToPlaylist: ret.contentToPlaylist,
-    };
+    return await this.playlistService.create(createPlaylistDto);
   }
 
   @ApiOperation({

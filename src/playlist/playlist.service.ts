@@ -9,7 +9,7 @@ import { Display } from "src/display/entities/display.entity";
 import { Repository } from "typeorm";
 import { ContentToPlaylistDto } from "./dto/content-to-playlist.dto";
 import { CreatePlaylistDto } from "./dto/create-playlist.dto";
-import { dataToUpdate, UpdatePlaylistDto } from "./dto/update-playlist.dto";
+import { UpdatePlaylistDto } from "./dto/update-playlist.dto";
 import { ContentToPlaylist } from "./entities/content-to-playlist.entity";
 import { Playlist } from "./entities/playlist.entity";
 
@@ -26,43 +26,8 @@ export class PlaylistService {
     private contentRepository: Repository<Content>
   ) {}
 
-  async create(createPlaylistDto: CreatePlaylistDto) {
-    let ret: Promise<Playlist>;
-    let playlist = await new Playlist();
-    let display: Display;
-    playlist.authorId = createPlaylistDto.authorId;
-    this.checkOrder(createPlaylistDto.contentToPlaylistDto);
-    try {
-      display = await this.displayRepository.findOneOrFail(
-        +createPlaylistDto.displayId
-      );
-    } catch (err) {
-      throw new NotFoundException(
-        `Cant find display to attach with id ${createPlaylistDto.displayId}`
-      );
-    }
-    if (display.playlist) {
-      throw new BadRequestException("Current Display already has Playlist");
-    }
-    playlist.display = Promise.resolve(display);
-    playlist = await this.playlistRepository.save(playlist);
-    playlist.contentToPlaylist = [];
-    this.displayRepository.save(display);
-
-    createPlaylistDto.contentToPlaylistDto.forEach((element) => {
-      ret = this.ContentToPlayistFromDto(element, playlist.id)
-        .then((element) => {
-          playlist.contentToPlaylist.push(element);
-          return this.playlistRepository.save(playlist);
-        })
-        .catch((err) => {
-          throw new NotFoundException(
-            err + `Can't find Content with id = ${element.contentId}`
-          );
-        });
-    });
-
-    return ret;
+  async create(dto: CreatePlaylistDto) {
+    return await this.playlistRepository.save(dto);
   }
 
   findAll() {
@@ -73,13 +38,8 @@ export class PlaylistService {
     return this.playlistRepository.findOne(id);
   }
 
-  async update(id: number, updatePlaylistDto: UpdatePlaylistDto) {
-    let ret: Promise<Playlist>;
-    const playlist: Playlist = await this.playlistRepository.findOne(id);
-    updatePlaylistDto.data.forEach((elem) => {
-      ret = this.flexPlaylist(elem, playlist);
-    });
-    return ret;
+  async update(id: number, dto: UpdatePlaylistDto) {
+    return this.playlistRepository.update(id, dto);
   }
 
   remove(id: number) {
@@ -123,39 +83,5 @@ export class PlaylistService {
       throw new NotFoundException(
         `Content with id = ${dto.contentId} don't exist`
       );
-  }
-
-  async flexPlaylist(dataToUpdate: dataToUpdate, playlist: Playlist) {
-    const ctp = await this.contentToPlayListRepository.findOne(
-      dataToUpdate.contentToPlaylistId
-    );
-
-    if (dataToUpdate.newOrder) {
-      ctp.order = dataToUpdate.newOrder;
-      const oldOrder = ctp.order;
-      const newOrder = dataToUpdate.newOrder;
-      playlist.contentToPlaylist.map((cur) => {
-        if (newOrder < oldOrder)
-          if (
-            Number(cur.order) >= Number(newOrder) &&
-            Number(cur.order) < Number(oldOrder)
-          ) {
-            cur.order = String(Number(cur.order) + 1);
-          } else if (newOrder > oldOrder) {
-            if (
-              /** */
-              Number(cur.order) <= Number(newOrder) &&
-              Number(cur.order) > Number(oldOrder)
-            ) {
-              cur.order = String(Number(cur.order) - 1);
-            }
-          }
-      });
-    }
-    if (dataToUpdate.newDuration) ctp.duration = dataToUpdate.newDuration;
-
-    const ret = await this.playlistRepository.save(playlist);
-    await this.contentToPlayListRepository.save(ctp);
-    return ret;
   }
 }

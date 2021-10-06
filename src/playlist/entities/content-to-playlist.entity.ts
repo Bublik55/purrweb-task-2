@@ -7,7 +7,7 @@ export class ContentToPlaylist {
   @PrimaryGeneratedColumn()
   id: string;
 
-  @Column()
+  @Column({ nullable: true })
   playlistId: string;
 
   @Column()
@@ -16,7 +16,7 @@ export class ContentToPlaylist {
   @ManyToOne(() => Playlist, (playlist) => playlist.contentToPlaylist, {
     onDelete: "CASCADE",
   })
-  playlist: Promise<Playlist>;
+  playlist: Playlist;
 
   @ManyToOne(() => Content, (content) => content.contentToPlaylist, {
     eager: true,
