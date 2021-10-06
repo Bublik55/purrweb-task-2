@@ -23,7 +23,9 @@ export class UserService {
   async findOneByName(username: string): Promise<User> {
     return this.userRepository.findOne({ username: username });
   }
-
+  async findOneByEmail(email: string): Promise<User> {
+    return this.userRepository.findOne({ email: email });
+  }
   async findEventsByUserId(id: string) {
     const user = await this.userRepository.findOne(id, {
       relations: ["events"],

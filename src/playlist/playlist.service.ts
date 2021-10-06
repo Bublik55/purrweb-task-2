@@ -67,26 +67,21 @@ export class PlaylistService {
     if (dto.order) {
       const oldOrder = +ctp.order;
       const newOrder = +dto.order;
-      console.log(oldOrder, newOrder);
-
       ctp.order = dto.order;
       playlist.contentToPlaylist.map((cur) => {
         if (newOrder < oldOrder)
           if (+cur.order >= newOrder && +cur.order < oldOrder) {
             cur.order = String(+cur.order + 1);
-            console.log("          33333333332");
           }
         if (newOrder > oldOrder) {
           if (+cur.order <= newOrder && +cur.order > oldOrder) {
             cur.order = String(+cur.order - 1);
-            console.log("          22222222");
           }
         }
-        this.contentToPlayListRepository.save(cur);
-        console.log(cur.order);
+        this.contentToPlayListRepository.update(cur.id, cur);
         return cur;
       });
-      this.contentToPlayListRepository.save(ctp);
+      this.contentToPlayListRepository.update(ctp.id, ctp);
     }
   }
 }

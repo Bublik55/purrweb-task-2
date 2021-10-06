@@ -5,6 +5,7 @@ import { AuthService } from "./auth.service";
 import { LoginDto } from "./dto/login.dto";
 import { Public } from "../common/guards/jwt-auth.guard";
 import { LocalStrategy } from "./strategies/local.strategy";
+import { SignupPipe } from "./pipes/signup.pipe";
 
 @Public()
 @ApiTags(`Auth`)
@@ -29,7 +30,7 @@ export class AuthController {
     status: 201,
     description: "User registred",
   })
-  async signUp(@Body() createUserDto: CreateUserDto) {
+  async signUp(@Body(SignupPipe) createUserDto: CreateUserDto) {
     return await this.authService.create(createUserDto);
   }
 }

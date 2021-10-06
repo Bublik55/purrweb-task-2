@@ -8,6 +8,8 @@ import {
   Patch,
   Post,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from "@nestjs/common";
 import {
   ApiBearerAuth,
@@ -23,6 +25,8 @@ import { UserService } from "./user.service";
 import { UserGuard } from "./guards/user.guard";
 import { GetUserDto } from "./dto/get-user.dto";
 import { GetEventDto } from "src/event/dto/get-event.dto";
+import { CreateUserPipe } from "./pipes/creat-user.pipe";
+import { UserExistsPipe } from "./pipes/user-exists.pipe";
 @ApiBearerAuth()
 @ApiTags("User")
 @Controller("users")
@@ -35,7 +39,7 @@ export class UserController {
   })
   @ApiResponse({ status: 201, type: GetUserDto })
   @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
+  async create(@Body(CreateUserPipe) createUserDto: CreateUserDto) {
     const user = await this.userService.create(createUserDto);
     return new GetUserDto(user);
   }
@@ -53,11 +57,7 @@ export class UserController {
   }
 
   // REVU: Кажется что без гварда, тут кто-угодно может получить информацию о любом юзере
-  @ApiOperation({
-    summary: "Get User",
-    description: "Get user by id",
-  })
-  @ApiProperty({ example: User })
+  @ApiOperation({ summary: "Get User by id" })
   @ApiResponse({ status: 200, type: GetUserDto })
   @Get(":id")
   async findOne(@Param("id", ParseIntPipe) id: string) {
@@ -66,10 +66,7 @@ export class UserController {
   }
 
   @UseGuards(UserGuard)
-  @ApiOperation({
-    summary: "Update user",
-    description: "Update user if user exists",
-  })
+  @ApiOperation({ summary: "Update user" })
   @ApiResponse({ status: 200 })
   @Patch(":id")
   update(
@@ -80,23 +77,17 @@ export class UserController {
   }
 
   @UseGuards(UserGuard)
-  @ApiOperation({
-    summary: "Delete user",
-    description: "Delete user",
-  })
+  @ApiOperation({ summary: "Delete user" })
   @ApiResponse({ status: 200 })
   @Delete(":id")
   remove(@Param("id", ParseIntPipe) id: string) {
     return this.userService.remove(id);
   }
 
-  @ApiOperation({
-    summary: "Delete user",
-    description: "Delete user",
-  })
+  @ApiOperation({ summary: "Get events by user" })
   @ApiResponse({ status: 200, type: [GetEventDto] })
   @Get(":id/events")
-  async getEventsByUser(@Param("id", ParseIntPipe) id: string) {
+  async getEventsByUser(@Param("id", ParseIntPipe, UserExistsPipe) id: string) {
     const user = await this.userService.findOneById(id);
     const events = await user.events;
     return events.map((event) => new GetEventDto(event));
