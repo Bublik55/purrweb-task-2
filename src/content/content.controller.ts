@@ -15,7 +15,7 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { ContentOwnerGuard } from "src/auth/guards/owner.guards/content.owner.guard";
+import { ContentGuard } from "src/content/guards/content.owner.guard";
 import { CreatorGuards } from "src/common/guards/creator.guard";
 import { ContentService } from "./content.service";
 import { CreateContentDto } from "./dto/create-content.dto";
@@ -57,7 +57,7 @@ export class ContentController {
     return new GetContentDto(obj);
   }
 
-  @UseGuards(ContentOwnerGuard)
+  @UseGuards(ContentGuard)
   @ApiOperation({
     summary: "Update content by ID",
     description: "Set new url/path and TYPE of content",
@@ -71,7 +71,7 @@ export class ContentController {
     this.contentService.update(+id, updateContentDto);
   }
 
-  @UseGuards(ContentOwnerGuard)
+  @UseGuards(ContentGuard)
   @ApiOperation({
     summary: "Delete content",
     description: "Delete content",

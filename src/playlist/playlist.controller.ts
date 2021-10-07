@@ -16,7 +16,7 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { PlaylistOwnerGuard } from "src/auth/guards/owner.guards/playlist.owner.guard";
+import { PlaylistOwnerGuard } from "src/playlist/guards/playlist.owner.guard";
 import { CreatorGuards } from "src/common/guards/creator.guard";
 import { CreatePlaylistDto } from "./dto/create-playlist.dto";
 import { GetPlaylistDto } from "./dto/get-playlist.dto";
@@ -49,7 +49,7 @@ export class PlaylistController {
 
   @ApiOperation({
     summary: "Get playlists",
-    description: "Return playlists",
+    description: "Get playlists",
   })
   @ApiResponse({ status: 200, type: [GetPlaylistDto] })
   @Get()
@@ -61,7 +61,7 @@ export class PlaylistController {
   @UseGuards(PlaylistOwnerGuard)
   @ApiOperation({
     summary: "Get playlist by ID",
-    description: "Return playlist",
+    description: "Get playlist",
   })
   @ApiResponse({
     status: 200,

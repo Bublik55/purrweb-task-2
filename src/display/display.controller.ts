@@ -15,7 +15,7 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { DisplayOwnerGuard } from "src/auth/guards/owner.guards/display.owner.guard";
+import { DisplayOwnerGuard } from "src/display/guards/display.owner.guard";
 import { CreatorGuards } from "src/common/guards/creator.guard";
 import { DisplayExistsPipe } from "src/common/pipes/display-exists.pipe";
 import { GetEventDto } from "src/event/dto/get-event.dto";

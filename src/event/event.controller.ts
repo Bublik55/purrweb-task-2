@@ -16,7 +16,7 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { EventGuard } from "src/auth/guards/owner.guards/event.owner.guard";
+import { EventGuard } from "src/event/guards/event.owner.guard";
 import { CreatorGuards } from "src/common/guards/creator.guard";
 import { DisplayExistsPipe } from "src/common/pipes/display-exists.pipe";
 import { EventExistsPipe } from "src/common/pipes/event-exists.pipe";
