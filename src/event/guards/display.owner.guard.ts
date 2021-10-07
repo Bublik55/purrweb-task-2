@@ -5,9 +5,7 @@ import {
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Content } from "src/content/entities/content.entity";
 import { Display } from "src/display/entities/display.entity";
-import { Event } from "src/event/entities/event.entity";
 import { Repository } from "typeorm";
 import { UserEntityIds } from "../../common/utills";
 @Injectable()

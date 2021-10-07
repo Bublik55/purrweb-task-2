@@ -1,15 +1,3 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsDecimal } from "class-validator";
+import { CreateDisplayDto } from "./create-display.dto";
 
-export class UpdateDisplayDto {
-  @ApiProperty({
-    description: "Event id to attach display",
-    type: String,
-    example: "2",
-  })
-  @IsDecimal()
-  eventId: string;
-
-  @IsDecimal()
-  displayId: string;
-}
+export class UpdateDisplayDto extends CreateDisplayDto {}

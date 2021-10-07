@@ -11,8 +11,8 @@ export class DisplayExistsPipe implements PipeTransform {
   constructor(private service: DisplayService) {}
 
   async transform(id: string, meta: ArgumentMetadata) {
-    const user = await this.service.findOne(+id);
-    if (user) throw new NotFoundException("Display don't exists");
+    const display = await this.service.findOne(+id);
+    if (!display) throw new NotFoundException("Display don't exists");
     return id;
   }
 }

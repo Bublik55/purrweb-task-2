@@ -20,7 +20,7 @@ export class Display {
     nullable: true,
     cascade: ["insert"],
   })
-  playlist: Playlist;
+  playlist: Promise<Playlist>;
 
   @ManyToOne(() => Event, (event) => event.displays, {
     lazy: true,
@@ -28,12 +28,13 @@ export class Display {
     nullable: true,
   })
   @JoinColumn()
-  event: Event;
-
+  event: Promise<Event>;
+  eventId: string;
   @ManyToOne(() => User, {
     cascade: true,
     onDelete: "CASCADE",
     lazy: true,
   })
-  author: User;
+  author: Promise<User>;
+  authorId: string;
 }

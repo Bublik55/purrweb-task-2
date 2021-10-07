@@ -8,25 +8,21 @@ import {
   Patch,
   Post,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from "@nestjs/common";
 import {
   ApiBearerAuth,
   ApiOperation,
-  ApiProperty,
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { CreateUserDto } from "./dto/create-user.dto";
-import { UpdateUserDto } from "./dto/update-user.dto";
-import { User } from "./entities/user.entity";
-import { UserService } from "./user.service";
-import { UserGuard } from "./guards/user.guard";
-import { GetUserDto } from "./dto/get-user.dto";
 import { GetEventDto } from "src/event/dto/get-event.dto";
-import { CreateUserPipe } from "./pipes/creat-user.pipe";
 import { UserExistsPipe } from "../common/pipes/user-exists.pipe";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { GetUserDto } from "./dto/get-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
+import { UserGuard } from "./guards/user.guard";
+import { CreateUserPipe } from "./pipes/creat-user.pipe";
+import { UserService } from "./user.service";
 @ApiBearerAuth()
 @ApiTags("User")
 @Controller("users")
@@ -70,7 +66,7 @@ export class UserController {
   @ApiResponse({ status: 200 })
   @Patch(":id")
   update(
-    @Param("id", ParseIntPipe) id: string,
+    @Param("id", UserExistsPipe) id: string,
     @Body() updateUserDto: UpdateUserDto
   ) {
     this.userService.update(id, updateUserDto);
@@ -87,7 +83,7 @@ export class UserController {
   @ApiOperation({ summary: "Get events by user" })
   @ApiResponse({ status: 200, type: [GetEventDto] })
   @Get(":id/events")
-  async getEventsByUser(@Param("id", ParseIntPipe, UserExistsPipe) id: string) {
+  async getEventsByUser(@Param("id", UserExistsPipe) id: string) {
     const user = await this.userService.findOneById(id);
     const events = await user.events;
     return events.map((event) => new GetEventDto(event));

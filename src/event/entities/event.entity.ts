@@ -21,7 +21,7 @@ export class Event {
     onDelete: "CASCADE",
     lazy: true,
   })
-  @JoinColumn() // &!&!&!&!&
+  @JoinColumn()
   author: User;
   @Column()
   authorId: string;

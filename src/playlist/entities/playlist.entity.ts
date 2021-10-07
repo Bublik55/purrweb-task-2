@@ -17,7 +17,6 @@ export class Playlist {
   id: string;
 
   @ManyToOne(() => User, {
-    onDelete: "CASCADE",
     lazy: true,
     cascade: true,
   })
@@ -41,7 +40,7 @@ export class Playlist {
     (contentToPlaylist) => contentToPlaylist.playlist,
     {
       eager: true,
-      onDelete: "SET NULL",
+      onDelete: "NO ACTION",
       nullable: true,
       cascade: true,
     }

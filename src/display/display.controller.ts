@@ -26,6 +26,7 @@ import { CreateDisplayDto } from "./dto/create-display.dto";
 import { GetDisplayDto } from "./dto/get-display.dto";
 import { UpdateDisplayDto } from "./dto/update-display.dto";
 import { CreateDisplayPipe } from "./pipes/create-display.pipe";
+import { UpdateDisplayPipe } from "./pipes/update-display.pipe";
 @ApiBearerAuth()
 @ApiTags("Display")
 @Controller("displays")
@@ -76,7 +77,10 @@ export class DisplayController {
   })
   @ApiResponse({ status: 200 })
   @Patch(":id")
-  update(@Param("id") id: string, @Body() updateDisplayDto: UpdateDisplayDto) {
+  update(
+    @Param("id", DisplayExistsPipe) id: string,
+    @Body(UpdateDisplayPipe) updateDisplayDto: UpdateDisplayDto
+  ) {
     this.displayService.update(+id, updateDisplayDto);
   }
 
@@ -93,7 +97,7 @@ export class DisplayController {
   @Get(":id/event")
   async getEventByDisplay(@Param("id", DisplayExistsPipe) id: string) {
     const display = await this.displayService.findOne(+id);
-    const event = display.event;
+    const event = await display.event;
     return new GetEventDto(event);
   }
 
@@ -103,7 +107,7 @@ export class DisplayController {
   async getUserByDisplay(@Param("id", DisplayExistsPipe) id: string) {
     const display = await this.displayService.findOne(+id);
     const user = display.author;
-    return new GetUserDto(user);
+    return new GetUserDto(await user);
   }
 
   @ApiOperation({ summary: "Get Playlist by Display" })
@@ -111,7 +115,7 @@ export class DisplayController {
   @Get(":id/playlist")
   async getPlaylistByDisplay(@Param("id", DisplayExistsPipe) id: string) {
     const display = await this.displayService.findOne(+id);
-    const playlist = display.playlist;
+    const playlist = await display.playlist;
     return new GetPlaylistDto(playlist);
   }
 }

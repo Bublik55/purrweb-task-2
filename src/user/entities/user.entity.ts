@@ -48,8 +48,7 @@ export class User {
   })
   @OneToMany(() => Event, (event) => event.author, {
     cascade: true,
-    onDelete: "SET NULL",
+    onDelete: "NO ACTION",
   })
-  @JoinTable()
   events: Promise<Event[]>;
 }

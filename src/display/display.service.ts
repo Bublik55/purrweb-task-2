@@ -19,8 +19,8 @@ export class DisplayService {
 
   async create(dto: CreateDisplayDto) {
     const display = new Display();
-    display.author = await this.userService.findOneById(dto.authorId);
-    display.event = await this.eventService.findOne(+dto.eventId);
+    display.author = this.userService.findOneById(dto.authorId);
+    display.event = this.eventService.findOne(+dto.eventId);
     return this.displayRepository.save(display);
   }
 
@@ -38,9 +38,14 @@ export class DisplayService {
   }
 
   async update(id: number, dto: UpdateDisplayDto) {
-    const display = await this.displayRepository.findOne(id);
-    display.event = await this.eventService.findOne(+dto.eventId);
-    this.displayRepository.update(id, display);
+    try {
+      const display = await this.displayRepository.findOne(id);
+      console.log(display);
+      display.event = this.eventService.findOne(+dto.eventId);
+      this.displayRepository.save(display);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   async remove(id: number) {

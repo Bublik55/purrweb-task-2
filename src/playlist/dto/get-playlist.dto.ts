@@ -5,7 +5,7 @@ import { ContentToPlaylistDto } from "./content-to-playlist.dto";
 export class GetPlaylistDto {
   constructor(playlist: Playlist) {
     this.id = playlist.id;
-    this.authorId = playlist.author.id;
+    this.authorId = playlist.authorId;
     this.contentToPlaylist = playlist.contentToPlaylist;
   }
 
@@ -18,7 +18,7 @@ export class GetPlaylistDto {
   displayId: string;
 
   @ApiProperty({
-    type: [ContentToPlaylistDto],
+    type: ContentToPlaylistDto,
     example: ContentToPlaylistDto,
   })
   contentToPlaylist: ContentToPlaylistDto[];

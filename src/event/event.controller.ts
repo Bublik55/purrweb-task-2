@@ -44,11 +44,12 @@ export class EventController {
     type: GetEventDto,
   })
   @Post()
-  async create(@Body(PutPlaylistValidation) createEventDto: CreateEventDto) {
+  async create(@Body() createEventDto: CreateEventDto) {
     const event = await this.eventService.create(createEventDto);
     return new GetEventDto(event);
   }
 
+  @UseGuards(EventGuard)
   @ApiOperation({
     summary: "Return all events",
     description: "Return events without authors and displays",
@@ -63,6 +64,7 @@ export class EventController {
     return events.map((event) => new GetEventDto(event));
   }
 
+  @UseGuards(EventGuard)
   @ApiOperation({
     summary: "Get event by id",
     description: "Get event",
@@ -85,8 +87,8 @@ export class EventController {
   @ApiResponse({ status: 200 })
   @Patch(":id")
   async update(
-    @Param("id") id: string,
-    @Body() updateEventDto: UpdateEventDto
+    @Param("id", EventExistsPipe) id: string,
+    @Body(/* insert UPDATE PIPE BKYAT" */) updateEventDto: UpdateEventDto
   ) {
     await this.eventService.update(+id, updateEventDto);
   }
@@ -105,7 +107,7 @@ export class EventController {
   @Get("/:id/user")
   @ApiOperation({ summary: "Get User/author By event" })
   @ApiResponse({ status: 200, type: GetUserDto })
-  async getUserByEvent(@Param("id") id: string) {
+  async getUserByEvent(@Param("id", DisplayExistsPipe) id: string) {
     const event = await this.eventService.findOne(+id);
     const user = await event.author;
     return new GetUserDto(user);
@@ -115,7 +117,7 @@ export class EventController {
   @Get("/:id/displays")
   @ApiOperation({ summary: "Get Displays by event" })
   @ApiResponse({ status: 200, type: [GetDisplayDto] })
-  async getDisplaysByEvent(@Param("id") id: string) {
+  async getDisplaysByEvent(@Param("id", DisplayExistsPipe) id: string) {
     const event = await this.eventService.findOne(+id);
     const displays = await event.displays;
     return displays.map((display) => new GetDisplayDto(display));
