@@ -1,7 +1,6 @@
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Display } from "src/display/entities/display.entity";
-import { User } from "src/user/entities/user.entity";
+import { DisplayService } from "src/display/display.service";
 import { Repository } from "typeorm";
 import { CreateEventDto } from "./dto/create-event.dto";
 import { UpdateEventDto } from "./dto/update-event.dto";
@@ -12,10 +11,8 @@ export class EventService {
   constructor(
     @InjectRepository(Event)
     private eventRepository: Repository<Event>,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-    @InjectRepository(Display)
-    private displayRepository: Repository<Display>
+    @Inject(forwardRef(() => DisplayService))
+    private displayService: DisplayService
   ) {}
 
   async create(createEventDto: CreateEventDto) {
@@ -36,17 +33,16 @@ export class EventService {
   }
 
   async update(id: number, updateEventDto: UpdateEventDto) {
-    const event = await this.eventRepository.findOne(id, {
-      relations: ["displays"],
-    });
+    const event = await this.eventRepository.findOne(id);
     if (updateEventDto.title) {
       event.title = updateEventDto.title;
     }
+
     // REVU: можно просто использовать displays: [{ id: id1 }, { id: id2 }]
     // Для чего используется Promise.resolve? нужен ли он здесь?
     updateEventDto.displayIds.forEach(async (element) => {
-      const display = await this.displayRepository.findOne(element);
-      (await event.displays).push(display);
+      const display = await this.displayService.findOne(+element);
+      event.displays.push(display);
     });
     return await this.eventRepository.update(id, event);
   }
@@ -55,5 +51,12 @@ export class EventService {
     const res = await this.eventRepository.delete(id);
     if (res.affected) return true;
     else return false;
+  }
+
+  async attachDisplayToEvent(id: string, displayId: string) {
+    const event = await this.findOne(+id);
+    const display = await this.displayService.findOne(+displayId);
+    event.displays.push(display);
+    this.eventRepository.update(id, event);
   }
 }

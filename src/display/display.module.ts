@@ -1,10 +1,7 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Event } from "src/event/entities/event.entity";
 import { EventModule } from "src/event/event.module";
-import { Playlist } from "src/playlist/entities/playlist.entity";
 import { PlaylistModule } from "src/playlist/playlist.module";
-import { User } from "src/user/entities/user.entity";
 import { UserModule } from "src/user/user.module";
 import { DisplayController } from "./display.controller";
 import { DisplayService } from "./display.service";
@@ -12,10 +9,10 @@ import { Display } from "./entities/display.entity";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Event, Display, Playlist, User]),
+    TypeOrmModule.forFeature([Display]),
     UserModule,
     PlaylistModule,
-    EventModule,
+    forwardRef(() => EventModule),
   ],
   controllers: [DisplayController],
   providers: [DisplayService],

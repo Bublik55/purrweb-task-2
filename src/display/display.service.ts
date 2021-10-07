@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { EventService } from "src/event/event.service";
 import { UserService } from "src/user/user.service";
@@ -13,6 +13,7 @@ export class DisplayService {
     @InjectRepository(Display)
     private displayRepository: Repository<Display>,
     private userService: UserService,
+    @Inject(forwardRef(() => EventService))
     private eventService: EventService
   ) {}
 

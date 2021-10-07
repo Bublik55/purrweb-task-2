@@ -32,5 +32,5 @@ export class Event {
     onDelete: "SET NULL",
   })
   @JoinColumn()
-  displays: Promise<Display[]>;
+  displays: Display[];
 }

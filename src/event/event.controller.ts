@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Put,
   UseGuards,
 } from "@nestjs/common";
 import {
@@ -17,6 +18,8 @@ import {
 } from "@nestjs/swagger";
 import { EventOwnerGuard } from "src/auth/guards/owner.guards/event.owner.guard";
 import { CreatorGuards } from "src/common/guards/creator.guard";
+import { DisplayExistsPipe } from "src/common/pipes/display-exists.pipe";
+import { EventExistsPipe } from "src/common/pipes/event-exists.pipe";
 import { GetDisplayDto } from "src/display/dto/get-display.dto";
 import { GetUserDto } from "src/user/dto/get-user.dto";
 import { CreateEventDto } from "./dto/create-event.dto";
@@ -98,16 +101,32 @@ export class EventController {
   }
 
   @Get("/:id/user")
+  @ApiOperation({ summary: "Get User/author By event" })
+  @ApiResponse({ status: 200 })
   async getUserByEvent(@Param("id") id: string) {
     const event = await this.eventService.findOne(+id);
     const user = await event.author;
     return new GetUserDto(user);
   }
 
+  //
   @Get("/:id/displays")
+  @ApiOperation({ summary: "Delete event" })
+  @ApiResponse({ status: 200 })
   async getDisplaysByEvent(@Param("id") id: string) {
     const event = await this.eventService.findOne(+id);
     const displays = await event.displays;
     return displays.map((display) => new GetDisplayDto(display));
+  }
+
+  @UseGuards(EventOwnerGuard)
+  @Put("/:id/displays/:displayid")
+  @ApiOperation({ summary: "Attach display to event" })
+  @ApiResponse({ status: 200 })
+  async attachDisplaysToEvent(
+    @Param("id", EventExistsPipe) id: string,
+    @Param("displayid", DisplayExistsPipe) displayId: string
+  ) {
+    this.eventService.attachDisplayToEvent(id, displayId);
   }
 }
