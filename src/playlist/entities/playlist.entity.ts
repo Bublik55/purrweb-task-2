@@ -20,10 +20,8 @@ export class Playlist {
     lazy: true,
     cascade: true,
   })
-  @JoinColumn()
+  @JoinColumn({ name: "authorId" })
   author: User;
-  @Column()
-  authorId: string;
 
   @OneToOne(() => Display, (display) => display.playlist, {
     lazy: true,
@@ -31,10 +29,8 @@ export class Playlist {
     onDelete: "SET NULL",
     nullable: true,
   })
-  @JoinColumn()
+  @JoinColumn({ name: "displayId" })
   display: Display;
-  @Column({ nullable: true })
-  displayId: string;
   @OneToMany(
     () => ContentToPlaylist,
     (contentToPlaylist) => contentToPlaylist.playlist,

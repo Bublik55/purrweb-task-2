@@ -19,10 +19,9 @@ export class EventGuard extends AuthGuard("jwt") {
 
   async canActivate(context: ExecutionContext) {
     const userEntityIds = UserEntityIds(context);
-    const event = await this.eventRepository.findOne(userEntityIds.entityID, {
-      relations: ["author"],
-    });
-    if (event && event.author.id == userEntityIds.userID) {
+    const event = await this.eventRepository.findOne(userEntityIds.entityID);
+
+    if (event && event.authorId == userEntityIds.userID) {
       return true;
     } else throw new ForbiddenException("Forbidden operation for user");
   }

@@ -16,13 +16,11 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { EventGuard } from "src/event/guards/event.owner.guard";
 import { CreatorGuards } from "src/common/guards/creator.guard";
 import { DisplayExistsPipe } from "src/common/pipes/display-exists.pipe";
 import { EventExistsPipe } from "src/common/pipes/event-exists.pipe";
 import { GetDisplayDto } from "src/display/dto/get-display.dto";
-import { CreatePlaylistDto } from "src/playlist/dto/create-playlist.dto";
-import { PutPlaylistValidation } from "src/playlist/pipes/create-playlist.pipe";
+import { EventGuard } from "src/event/guards/event.owner.guard";
 import { GetUserDto } from "src/user/dto/get-user.dto";
 import { CreateEventDto } from "./dto/create-event.dto";
 import { GetEventDto } from "./dto/get-event.dto";

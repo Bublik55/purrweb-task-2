@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Put,
   UseGuards,
 } from "@nestjs/common";
 import {
@@ -27,6 +28,7 @@ import { GetDisplayDto } from "./dto/get-display.dto";
 import { UpdateDisplayDto } from "./dto/update-display.dto";
 import { CreateDisplayPipe } from "./pipes/create-display.pipe";
 import { UpdateDisplayPipe } from "./pipes/update-display.pipe";
+import { PlaylistExistsPipe } from "src/common/pipes/playlist-exists.pipe";
 @ApiBearerAuth()
 @ApiTags("Display")
 @Controller("displays")
@@ -42,6 +44,8 @@ export class DisplayController {
   @Post()
   async create(@Body(CreateDisplayPipe) createDisplayDto: CreateDisplayDto) {
     const obj = await this.displayService.create(createDisplayDto);
+    await obj.author;
+    await obj.event;
     return new GetDisplayDto(obj);
   }
 
@@ -117,14 +121,5 @@ export class DisplayController {
     const display = await this.displayService.findOne(+id);
     const playlist = await display.playlist;
     return new GetPlaylistDto(playlist);
-  }
-  @ApiOperation({ summary: "Get Playlist by Display" })
-  @ApiResponse({ status: 200, type: GetPlaylistDto })
-  @Get(":id/playlist/:plailistid")
-  async attachPlaylist(
-    @Param("id", DisplayExistsPipe) id: string,
-    @Param("playlistId", DisplayExistsPipe) playlistId: string
-  ) {
-    this.displayService.atttachPlaylist(+id, +playlistId);
   }
 }

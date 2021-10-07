@@ -1,12 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Exclude } from "class-transformer";
 import { Event } from "src/event/entities/event.entity";
-import {
-  Column,
-  Entity,
-  JoinTable,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class User {
@@ -31,6 +26,7 @@ export class User {
     type: String,
   })
   @Column("text")
+  @Exclude()
   password!: string;
 
   @ApiProperty({

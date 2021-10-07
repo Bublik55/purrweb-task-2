@@ -17,6 +17,7 @@ export class Display {
   @OneToOne(() => Playlist, (playlist) => playlist.display, {
     lazy: true,
     onDelete: "NO ACTION",
+    onUpdate: "SET NULL",
     nullable: true,
     cascade: ["insert"],
   })
@@ -27,14 +28,14 @@ export class Display {
     onDelete: "SET NULL",
     nullable: true,
   })
-  @JoinColumn()
+  @JoinColumn({ name: "eventId" })
   event: Promise<Event>;
-  eventId: string;
+
   @ManyToOne(() => User, {
     cascade: true,
     onDelete: "CASCADE",
     lazy: true,
   })
+  @JoinColumn({ name: "authorId" })
   author: Promise<User>;
-  authorId: string;
 }

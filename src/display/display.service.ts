@@ -15,8 +15,7 @@ export class DisplayService {
     private displayRepository: Repository<Display>,
     private userService: UserService,
     @Inject(forwardRef(() => EventService))
-    private eventService: EventService,
-    private playlistService: PlaylistService
+    private eventService: EventService
   ) {}
 
   async create(dto: CreateDisplayDto) {
@@ -50,14 +49,5 @@ export class DisplayService {
 
   async remove(id: number) {
     await this.displayRepository.delete(id);
-  }
-  ///check it mf
-  async atttachPlaylist(id: number, playlistId: number) {
-    const playlist = this.playlistService.findOne(playlistId);
-    const display = await this.displayRepository.findOne(id);
-    display.playlist = playlist;
-    await display.playlist;
-    this.displayRepository.update(id, display);
-    throw new Error("Method not implemented.");
   }
 }

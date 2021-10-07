@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
   Put,
@@ -16,8 +15,10 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { PlaylistOwnerGuard } from "src/playlist/guards/playlist.owner.guard";
 import { CreatorGuards } from "src/common/guards/creator.guard";
+import { DisplayExistsPipe } from "src/common/pipes/display-exists.pipe";
+import { PlaylistExistsPipe } from "src/common/pipes/playlist-exists.pipe";
+import { PlaylistOwnerGuard } from "src/playlist/guards/playlist.owner.guard";
 import { CreatePlaylistDto } from "./dto/create-playlist.dto";
 import { GetPlaylistDto } from "./dto/get-playlist.dto";
 import { UpdateContentToPlaylistDto } from "./dto/update-contentToPlaylist.dto";
@@ -88,10 +89,7 @@ export class PlaylistController {
   }
 
   @UseGuards(PlaylistOwnerGuard)
-  @ApiOperation({
-    summary: "Delete playlist",
-    description: "Delete playlist",
-  })
+  @ApiOperation({ summary: "Delete playlist" })
   @ApiResponse({ status: 200 })
   @Delete(":id")
   async remove(@Param("id") id: string) {
@@ -100,15 +98,27 @@ export class PlaylistController {
 
   @Put(":id/content")
   @UseGuards(PlaylistOwnerGuard)
-  @ApiOperation({
-    summary: "Change order and/or duration of content",
-    description: "Change order and/or duration of content",
-  })
+  @ApiOperation({ summary: "Change order and/or duration of content" })
   @ApiResponse({ status: 200 })
   async setNewDurationOrder(
     @Param("id", ChangeOrderValidation) id: string,
     @Body(PutPlaylistValidation) dto: UpdateContentToPlaylistDto
   ) {
-    return await this.playlistService.updateContentToPlaylist(id, dto);
+    await this.playlistService.updateContentToPlaylist(id, dto);
+  }
+
+  @ApiOperation({
+    summary: "Attach playlist to display",
+    description:
+      "If Any playlist was attached to display - this action rewrite relations",
+  })
+  @ApiResponse({ status: 200, type: GetPlaylistDto })
+  @Put(":id/display/:displayid")
+  async attachPlaylist(
+    @Param("id", PlaylistExistsPipe) id: string,
+    @Param("displayid", DisplayExistsPipe) playlistId: string
+  ) {
+    console.log(id, playlistId);
+    this.playlistService.atttachPlaylist(id, playlistId);
   }
 }
