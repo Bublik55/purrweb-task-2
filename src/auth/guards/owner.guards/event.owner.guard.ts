@@ -9,7 +9,7 @@ import { Event } from "src/event/entities/event.entity";
 import { Repository } from "typeorm";
 import { UserEntityIds } from "../../../common/utills";
 @Injectable()
-export class EventOwnerGuard extends AuthGuard("jwt") {
+export class EventGuard extends AuthGuard("jwt") {
   constructor(
     @InjectRepository(Event)
     private eventRepository: Repository<Event>

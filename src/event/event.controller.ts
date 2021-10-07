@@ -16,11 +16,13 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { EventOwnerGuard } from "src/auth/guards/owner.guards/event.owner.guard";
+import { EventGuard } from "src/auth/guards/owner.guards/event.owner.guard";
 import { CreatorGuards } from "src/common/guards/creator.guard";
 import { DisplayExistsPipe } from "src/common/pipes/display-exists.pipe";
 import { EventExistsPipe } from "src/common/pipes/event-exists.pipe";
 import { GetDisplayDto } from "src/display/dto/get-display.dto";
+import { CreatePlaylistDto } from "src/playlist/dto/create-playlist.dto";
+import { PutPlaylistValidation } from "src/playlist/pipes/create-playlist.pipe";
 import { GetUserDto } from "src/user/dto/get-user.dto";
 import { CreateEventDto } from "./dto/create-event.dto";
 import { GetEventDto } from "./dto/get-event.dto";
@@ -42,7 +44,7 @@ export class EventController {
     type: GetEventDto,
   })
   @Post()
-  async create(@Body() createEventDto: CreateEventDto) {
+  async create(@Body(PutPlaylistValidation) createEventDto: CreateEventDto) {
     const event = await this.eventService.create(createEventDto);
     return new GetEventDto(event);
   }
@@ -75,7 +77,7 @@ export class EventController {
     return new GetEventDto(event);
   }
 
-  @UseGuards(EventOwnerGuard)
+  @UseGuards(EventGuard)
   @ApiOperation({
     summary: "Update event",
     description: "Update event - attach displays to its. Displays ids in DTO",
@@ -89,7 +91,7 @@ export class EventController {
     await this.eventService.update(+id, updateEventDto);
   }
 
-  @UseGuards(EventOwnerGuard)
+  @UseGuards(EventGuard)
   @ApiOperation({
     summary: "Delete event",
     description: "Delete event",
@@ -102,7 +104,7 @@ export class EventController {
 
   @Get("/:id/user")
   @ApiOperation({ summary: "Get User/author By event" })
-  @ApiResponse({ status: 200 })
+  @ApiResponse({ status: 200, type: GetUserDto })
   async getUserByEvent(@Param("id") id: string) {
     const event = await this.eventService.findOne(+id);
     const user = await event.author;
@@ -111,15 +113,15 @@ export class EventController {
 
   //
   @Get("/:id/displays")
-  @ApiOperation({ summary: "Delete event" })
-  @ApiResponse({ status: 200 })
+  @ApiOperation({ summary: "Get Displays by event" })
+  @ApiResponse({ status: 200, type: [GetDisplayDto] })
   async getDisplaysByEvent(@Param("id") id: string) {
     const event = await this.eventService.findOne(+id);
     const displays = await event.displays;
     return displays.map((display) => new GetDisplayDto(display));
   }
 
-  @UseGuards(EventOwnerGuard)
+  @UseGuards(EventGuard)
   @Put("/:id/displays/:displayid")
   @ApiOperation({ summary: "Attach display to event" })
   @ApiResponse({ status: 200 })

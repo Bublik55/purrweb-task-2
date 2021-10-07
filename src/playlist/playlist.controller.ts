@@ -23,6 +23,8 @@ import { GetPlaylistDto } from "./dto/get-playlist.dto";
 import { UpdateContentToPlaylistDto } from "./dto/update-contentToPlaylist.dto";
 import { UpdatePlaylistDto } from "./dto/update-playlist.dto";
 import { Playlist } from "./entities/playlist.entity";
+import { ChangeOrderValidation } from "./pipes/change-order.pipe";
+import { PutPlaylistValidation } from "./pipes/create-playlist.pipe";
 import { PlaylistService } from "./playlist.service";
 @ApiBearerAuth()
 @ApiTags("Playlist oper")
@@ -38,7 +40,9 @@ export class PlaylistController {
   })
   @ApiResponse({ status: 201, type: GetPlaylistDto })
   @Post()
-  async create(@Body() createPlaylistDto: CreatePlaylistDto) {
+  async create(
+    @Body(PutPlaylistValidation) createPlaylistDto: CreatePlaylistDto
+  ) {
     const playlist = await this.playlistService.create(createPlaylistDto);
     return new GetPlaylistDto(playlist);
   }
@@ -54,6 +58,7 @@ export class PlaylistController {
     return ret.map((pl) => new GetPlaylistDto(pl));
   }
 
+  @UseGuards(PlaylistOwnerGuard)
   @ApiOperation({
     summary: "Get playlist by ID",
     description: "Return playlist",
@@ -75,7 +80,10 @@ export class PlaylistController {
   })
   @ApiResponse({ status: 200 })
   @Patch(":id")
-  async update(@Param("id") id: string, @Body() dto: UpdatePlaylistDto) {
+  async update(
+    @Param("id") id: string,
+    @Body(ChangeOrderValidation) dto: UpdatePlaylistDto
+  ) {
     await this.playlistService.update(+id, dto);
   }
 
@@ -97,9 +105,9 @@ export class PlaylistController {
     description: "Change order and/or duration of content",
   })
   @ApiResponse({ status: 200 })
-  async setNewDration(
-    @Param("id", ParseIntPipe) id: string,
-    @Body() dto: UpdateContentToPlaylistDto
+  async setNewDurationOrder(
+    @Param("id", ChangeOrderValidation) id: string,
+    @Body(PutPlaylistValidation) dto: UpdateContentToPlaylistDto
   ) {
     return await this.playlistService.updateContentToPlaylist(id, dto);
   }

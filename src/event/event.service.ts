@@ -37,20 +37,17 @@ export class EventService {
     if (updateEventDto.title) {
       event.title = updateEventDto.title;
     }
-
     // REVU: можно просто использовать displays: [{ id: id1 }, { id: id2 }]
     // Для чего используется Promise.resolve? нужен ли он здесь?
     updateEventDto.displayIds.forEach(async (element) => {
       const display = await this.displayService.findOne(+element);
       event.displays.push(display);
     });
-    return await this.eventRepository.update(id, event);
+    await this.eventRepository.update(id, event);
   }
 
   async remove(id: number) {
-    const res = await this.eventRepository.delete(id);
-    if (res.affected) return true;
-    else return false;
+    await this.eventRepository.delete(id);
   }
 
   async attachDisplayToEvent(id: string, displayId: string) {

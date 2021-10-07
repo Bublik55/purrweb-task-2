@@ -34,9 +34,8 @@ export class PlaylistService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} playlist`;
+    return this.playlistRepository.delete(id);
   }
-
   /**** */
   checkOrder(dto: ContentToPlaylistDto[]) {
     const max = dto.length;
@@ -59,6 +58,9 @@ export class PlaylistService {
     //  return this.playlistRepository.save(playlist);
   }
 
+  async getContentToPlaylistById(id: string) {
+    return await this.contentToPlayListRepository.findOne(+id);
+  }
   async flexPlaylist(dto: UpdateContentToPlaylistDto, playlist: Playlist) {
     const ctp = await this.contentToPlayListRepository.findOne(
       dto.contentToPlaylistId
