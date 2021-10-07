@@ -1,6 +1,7 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { EventService } from "src/event/event.service";
+import { PlaylistService } from "src/playlist/playlist.service";
 import { UserService } from "src/user/user.service";
 import { Repository } from "typeorm";
 import { CreateDisplayDto } from "./dto/create-display.dto";
@@ -14,13 +15,16 @@ export class DisplayService {
     private displayRepository: Repository<Display>,
     private userService: UserService,
     @Inject(forwardRef(() => EventService))
-    private eventService: EventService
+    private eventService: EventService,
+    private playlistService: PlaylistService
   ) {}
 
   async create(dto: CreateDisplayDto) {
     const display = new Display();
-    display.author = this.userService.findOneById(dto.authorId);
+    display.author = this.userService.findOneById(dto.authorId).finally();
     display.event = this.eventService.findOne(+dto.eventId);
+    await display.author;
+    await display.event;
     return this.displayRepository.save(display);
   }
 
@@ -38,17 +42,22 @@ export class DisplayService {
   }
 
   async update(id: number, dto: UpdateDisplayDto) {
-    try {
-      const display = await this.displayRepository.findOne(id);
-      console.log(display);
-      display.event = this.eventService.findOne(+dto.eventId);
-      this.displayRepository.save(display);
-    } catch (e) {
-      console.log(e);
-    }
+    const display = await this.displayRepository.findOne(id);
+    display.event = this.eventService.findOne(+dto.eventId);
+    await display.event;
+    this.displayRepository.save(display);
   }
 
   async remove(id: number) {
     await this.displayRepository.delete(id);
+  }
+  ///check it mf
+  async atttachPlaylist(id: number, playlistId: number) {
+    const playlist = this.playlistService.findOne(playlistId);
+    const display = await this.displayRepository.findOne(id);
+    display.playlist = playlist;
+    await display.playlist;
+    this.displayRepository.update(id, display);
+    throw new Error("Method not implemented.");
   }
 }

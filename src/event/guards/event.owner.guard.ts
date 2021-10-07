@@ -22,7 +22,7 @@ export class EventGuard extends AuthGuard("jwt") {
     const event = await this.eventRepository.findOne(userEntityIds.entityID, {
       relations: ["author"],
     });
-    if ((await event.author).id == userEntityIds.userID) {
+    if (event && event.author.id == userEntityIds.userID) {
       return true;
     } else throw new ForbiddenException("Forbidden operation for user");
   }

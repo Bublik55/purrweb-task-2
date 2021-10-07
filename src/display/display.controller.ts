@@ -118,4 +118,13 @@ export class DisplayController {
     const playlist = await display.playlist;
     return new GetPlaylistDto(playlist);
   }
+  @ApiOperation({ summary: "Get Playlist by Display" })
+  @ApiResponse({ status: 200, type: GetPlaylistDto })
+  @Get(":id/playlist/:plailistid")
+  async attachPlaylist(
+    @Param("id", DisplayExistsPipe) id: string,
+    @Param("playlistId", DisplayExistsPipe) playlistId: string
+  ) {
+    this.displayService.atttachPlaylist(+id, +playlistId);
+  }
 }
