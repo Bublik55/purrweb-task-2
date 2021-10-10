@@ -20,7 +20,7 @@ import { CreatorGuard } from "src/common/guards/creator.guard";
 import { DisplayExistsPipe } from "src/common/pipes/display-exists.pipe";
 import { EventExistsPipe } from "src/common/pipes/event-exists.pipe";
 import { GetDisplayDto } from "src/display/dto/get-display.dto";
-import { EventGuard } from "src/event/guards/event.owner.guard";
+import { EventGuard } from "src/event/guards/event.guard";
 import { GetUserDto } from "src/user/dto/get-user.dto";
 import { CreateEventDto } from "./dto/create-event.dto";
 import { GetEventDto } from "./dto/get-event.dto";

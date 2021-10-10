@@ -15,7 +15,7 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { ContentGuard } from "src/content/guards/content.owner.guard";
+import { ContentGuard } from "src/content/guards/content.guard";
 import { CreatorGuard } from "src/common/guards/creator.guard";
 import { ContentService } from "./content.service";
 import { CreateContentDto } from "./dto/create-content.dto";

@@ -33,11 +33,11 @@ export class PutPlaylistValidation implements PipeTransform {
     return value;
   }
 
-  validateSize(ctp: ContentToPlaylistDto[]) {
+  private validateSize(ctp: ContentToPlaylistDto[]) {
     const values = ctp.map((e) => +e.order);
     console.log(values);
     values.sort((a, b) => +a - +b);
     const res = values.reduce((a, b) => (b - a == 1 ? b : null));
-    if (!res) throw new BadRequestException("Bad Order");
+    if (!res || res > values.length) throw new BadRequestException("Bad Order");
   }
 }

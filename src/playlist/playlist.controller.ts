@@ -16,9 +16,8 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { CreatorGuard } from "src/common/guards/creator.guard";
-import { DisplayExistsPipe } from "src/common/pipes/display-exists.pipe";
 import { PlaylistExistsPipe } from "src/common/pipes/playlist-exists.pipe";
-import { PlaylistGuard } from "src/playlist/guards/playlist.owner.guard";
+import { PlaylistGuard } from "src/playlist/guards/playlist.guard";
 import { CreatePlaylistDto } from "./dto/create-playlist.dto";
 import { GetPlaylistDto } from "./dto/get-playlist.dto";
 import { UpdateContentToPlaylistDto } from "./dto/update-contentToPlaylist.dto";
@@ -28,7 +27,7 @@ import { ChangeOrderValidation } from "./pipes/change-order.pipe";
 import { PutPlaylistValidation } from "./pipes/create-playlist.pipe";
 import { PlaylistService } from "./playlist.service";
 @ApiBearerAuth()
-@ApiTags("Playlist oper")
+@ApiTags("Playlist")
 @Controller("playlists")
 export class PlaylistController {
   constructor(private readonly playlistService: PlaylistService) {}
