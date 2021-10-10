@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumberString } from "class-validator";
+import { IsEnum, IsNumberString, IsString } from "class-validator";
 import { CONTENT_TYPE } from "../entities/content.entity";
 
 export class CreateContentDto {
@@ -14,8 +14,10 @@ export class CreateContentDto {
     description: "Type of content [PICTURE, HTML, VIDEO, AUDIO]",
     example: CONTENT_TYPE.HTML,
   })
+  @IsEnum(CONTENT_TYPE)
   contentType: CONTENT_TYPE;
 
+  @IsString()
   @ApiProperty({
     description: "Path to content",
     type: String,

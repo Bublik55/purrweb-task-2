@@ -76,6 +76,6 @@ export class ContentController {
   @ApiResponse({ status: 200 })
   @Delete(":id")
   remove(@Param("id", ParseIntPipe) id: string) {
-    return this.contentService.remove(id);
+    this.contentService.remove(id);
   }
 }

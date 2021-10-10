@@ -7,7 +7,7 @@ export class ContentToPlaylist {
   @PrimaryGeneratedColumn()
   id: string;
 
-  @Column({ nullable: true })
+  @Column({})
   playlistId: string;
 
   @Column()

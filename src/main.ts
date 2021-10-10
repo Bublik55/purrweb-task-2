@@ -10,11 +10,11 @@ async function bootstrap() {
     .setTitle("Example")
     .setDescription(
       `Auth/SignUp is public route.
-	  All requests to other routes must contain jwt token.
+      All Other routs use JWTGuard
+      All requests to other routes must contain jwt token.
     \tUser can create resource when userId in dto contain his id :\n
     \tUser can update and delete sources in one case - he/she is author of source.
-	  \nAuthor of source setups in DTO - anyone can't setup any ID - otherwise Guard will rejects reqest
-		\n Status 500 not handled`
+	  \nAuthor of source setups in DTO - anyone can't setup any ID - otherwise Guard will rejects reqest`
     )
     .setVersion("0.0.1")
     .addBearerAuth()
@@ -26,12 +26,5 @@ async function bootstrap() {
 bootstrap();
 
 // REVU:
-// Использовать CRUD-модуль
-// Перенести AuthModule из utils на уровень с остальными модулями
-// Все гварды связанные с сущностями перенести в соотвествующие модули
 // Все что используется в нескольких модулях перенести в папку common
 // Убрать декораторы class-validator'a из сущностей, добавить декораторы class-transformer где будет необходимо
-
-// При апдейте сущностей либо делать апдейт всей сущности
-// целиком(описать в dto все свойства сущности) либо вынети
-// операции связывания между сущностями в отдельный роут

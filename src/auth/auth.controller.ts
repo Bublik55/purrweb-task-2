@@ -1,10 +1,9 @@
-import { Body, Controller, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Post } from "@nestjs/common";
 import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { CreateUserDto } from "src/user/dto/create-user.dto";
+import { Public } from "../common/guards/jwt-auth.guard";
 import { AuthService } from "./auth.service";
 import { LoginDto } from "./dto/login.dto";
-import { Public } from "../common/guards/jwt-auth.guard";
-import { LocalStrategy } from "./strategies/local.strategy";
 import { SignupPipe } from "./pipes/signup.pipe";
 
 @Public()
@@ -14,7 +13,6 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post("login")
-  @UseGuards(LocalStrategy)
   @ApiOperation({ summary: "Login User" })
   @ApiOkResponse({
     status: 200,

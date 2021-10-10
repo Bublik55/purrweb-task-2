@@ -1,6 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { IsNumberString } from "class-validator";
 
 export class CreateEventDto {
+  @IsNumberString()
   @ApiProperty({
     description: "Owner/author id",
     type: String,
@@ -8,6 +10,7 @@ export class CreateEventDto {
   })
   authorId: string;
 
+  @IsNumberString()
   @ApiProperty({
     description: "Title of event",
     type: String,
