@@ -33,17 +33,7 @@ export class EventService {
   }
 
   async update(id: number, updateEventDto: UpdateEventDto) {
-    const event = await this.eventRepository.findOne(id);
-    if (updateEventDto.title) {
-      event.title = updateEventDto.title;
-    }
-    // REVU: можно просто использовать displays: [{ id: id1 }, { id: id2 }]
-    // Для чего используется Promise.resolve? нужен ли он здесь?
-    updateEventDto.displayIds.forEach(async (element) => {
-      const display = await this.displayService.findOne(+element);
-      event.displays.push(display);
-    });
-    await this.eventRepository.update(id, event);
+    await this.eventRepository.update(id, updateEventDto);
   }
 
   async remove(id: number) {
@@ -53,7 +43,8 @@ export class EventService {
   async attachDisplayToEvent(id: string, displayId: string) {
     const event = await this.findOne(+id);
     const display = await this.displayService.findOne(+displayId);
-    event.displays.push(display);
-    this.eventRepository.update(id, event);
+    (await event.displays).push(display);
+    console.log(event);
+    this.eventRepository.save(event);
   }
 }

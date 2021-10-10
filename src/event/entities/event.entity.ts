@@ -28,9 +28,8 @@ export class Event {
 
   @OneToMany(() => Display, (displays) => displays.event, {
     lazy: true,
-    cascade: true,
-    onDelete: "SET NULL",
+    cascade: ["insert", "recover", "update"],
+    onDelete: "NO ACTION",
   })
-  @JoinColumn()
   displays: Display[];
 }

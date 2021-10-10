@@ -80,13 +80,13 @@ export class EventController {
   @UseGuards(EventGuard)
   @ApiOperation({
     summary: "Update event",
-    description: "Update event - attach displays to its. Displays ids in DTO",
+    description: "Update event - set new title",
   })
   @ApiResponse({ status: 200 })
   @Patch(":id")
   async update(
     @Param("id", EventExistsPipe) id: string,
-    @Body(/* insert UPDATE PIPE BKYAT" */) updateEventDto: UpdateEventDto
+    @Body() updateEventDto: UpdateEventDto
   ) {
     await this.eventService.update(+id, updateEventDto);
   }
@@ -102,23 +102,24 @@ export class EventController {
     await this.eventService.remove(+id);
   }
 
+  @UseGuards(EventGuard)
   @Get("/:id/user")
   @ApiOperation({ summary: "Get User/author By event" })
   @ApiResponse({ status: 200, type: GetUserDto })
-  async getUserByEvent(@Param("id", DisplayExistsPipe) id: string) {
+  async getUserByEvent(@Param("id", EventExistsPipe) id: string) {
     const event = await this.eventService.findOne(+id);
     const user = await event.author;
     return new GetUserDto(user);
   }
 
-  //
+  @UseGuards(EventGuard)
   @Get("/:id/displays")
   @ApiOperation({ summary: "Get Displays by event" })
   @ApiResponse({ status: 200, type: [GetDisplayDto] })
-  async getDisplaysByEvent(@Param("id", DisplayExistsPipe) id: string) {
+  async getDisplaysByEvent(@Param("id", EventExistsPipe) id: string) {
     const event = await this.eventService.findOne(+id);
     const displays = await event.displays;
-    return displays.map((display) => new GetDisplayDto(display));
+    return displays;
   }
 
   @UseGuards(EventGuard)

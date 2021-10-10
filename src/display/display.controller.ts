@@ -16,9 +16,10 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { DisplayOwnerGuard } from "src/display/guards/display.owner.guard";
 import { CreatorGuards } from "src/common/guards/creator.guard";
 import { DisplayExistsPipe } from "src/common/pipes/display-exists.pipe";
+import { PlaylistExistsPipe } from "src/common/pipes/playlist-exists.pipe";
+import { DisplayOwnerGuard } from "src/display/guards/display.owner.guard";
 import { GetEventDto } from "src/event/dto/get-event.dto";
 import { GetPlaylistDto } from "src/playlist/dto/get-playlist.dto";
 import { GetUserDto } from "src/user/dto/get-user.dto";
@@ -28,7 +29,6 @@ import { GetDisplayDto } from "./dto/get-display.dto";
 import { UpdateDisplayDto } from "./dto/update-display.dto";
 import { CreateDisplayPipe } from "./pipes/create-display.pipe";
 import { UpdateDisplayPipe } from "./pipes/update-display.pipe";
-import { PlaylistExistsPipe } from "src/common/pipes/playlist-exists.pipe";
 @ApiBearerAuth()
 @ApiTags("Display")
 @Controller("displays")
@@ -44,14 +44,12 @@ export class DisplayController {
   @Post()
   async create(@Body(CreateDisplayPipe) createDisplayDto: CreateDisplayDto) {
     const obj = await this.displayService.create(createDisplayDto);
-    await obj.author;
-    await obj.event;
     return new GetDisplayDto(obj);
   }
 
   @ApiOperation({
     summary: "Return all displays",
-    description: "Return displays with author, event",
+    description: "Return displays with author",
   })
   @ApiResponse({ status: 200, type: [GetDisplayDto] })
   @Get()
@@ -121,5 +119,20 @@ export class DisplayController {
     const display = await this.displayService.findOne(+id);
     const playlist = await display.playlist;
     return new GetPlaylistDto(playlist);
+  }
+
+  @UseGuards(DisplayOwnerGuard)
+  @ApiOperation({
+    summary: "Attach playlist to display",
+    description:
+      "If Any playlist was attached to display - this action rewrite relations",
+  })
+  @ApiResponse({ status: 200, type: GetPlaylistDto })
+  @Put(":id/playlist/:playlistId")
+  async attachPlaylist(
+    @Param("id", DisplayExistsPipe) id: string,
+    @Param("playlistId", PlaylistExistsPipe) playlistId: string
+  ) {
+    this.displayService.attachPlaylist(id, playlistId);
   }
 }

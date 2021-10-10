@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ContentModule } from "src/content/content.module";
 import { DisplayModule } from "src/display/display.module";
@@ -11,7 +11,7 @@ import { PlaylistService } from "./playlist.service";
   imports: [
     TypeOrmModule.forFeature([Playlist, ContentToPlaylist]),
     ContentModule,
-    DisplayModule,
+    forwardRef(() => DisplayModule),
   ],
   controllers: [PlaylistController],
   providers: [PlaylistService],

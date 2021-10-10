@@ -22,7 +22,7 @@ export class CreateUserDto {
 
   @ApiProperty({
     description: "User`s password",
-    example: "Bob@awesomeEncrypted",
+    example: "Bobbby",
     type: String,
   })
   @IsString()

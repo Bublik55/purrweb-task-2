@@ -15,10 +15,11 @@ export class DisplayService {
     private displayRepository: Repository<Display>,
     private userService: UserService,
     @Inject(forwardRef(() => EventService))
-    private eventService: EventService
+    private eventService: EventService,
+    private playlistService: PlaylistService
   ) {}
 
-  async create(dto: CreateDisplayDto) {
+  async create(dto: CreateDisplayDto): Promise<Display> {
     const display = new Display();
     display.author = this.userService.findOneById(dto.authorId).finally();
     display.event = this.eventService.findOne(+dto.eventId);
@@ -29,25 +30,32 @@ export class DisplayService {
 
   async findAll(): Promise<Display[]> {
     return await this.displayRepository.find({
-      relations: ["event", "author"],
+      relations: ["event", "author", "playlist"],
     });
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<Display> {
     const display = await this.displayRepository.findOne(id, {
-      relations: ["event", "author"],
+      relations: ["event", "author", "playlist"],
     });
     return display;
   }
 
-  async update(id: number, dto: UpdateDisplayDto) {
-    const display = await this.displayRepository.findOne(id);
+  async update(id: number, dto: UpdateDisplayDto): Promise<void> {
+    const display = await this.findOne(id);
     display.event = this.eventService.findOne(+dto.eventId);
     await display.event;
     this.displayRepository.save(display);
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<void> {
     await this.displayRepository.delete(id);
+  }
+
+  async attachPlaylist(id: string, playlistId: string): Promise<void> {
+    const playlist = await this.playlistService.getPlaylistByDisplayId(id);
+    if (playlist)
+      await this.playlistService.deleteDisplayFromPlaylist(playlist.id);
+    this.playlistService.attachDisplay(playlistId, id);
   }
 }

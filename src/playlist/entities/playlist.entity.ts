@@ -18,19 +18,24 @@ export class Playlist {
 
   @ManyToOne(() => User, {
     lazy: true,
-    cascade: true,
+    onDelete: "CASCADE",
+    nullable: false,
   })
-  @JoinColumn({ name: "authorId" })
   author: User;
+  @Column()
+  authorId: string;
 
   @OneToOne(() => Display, (display) => display.playlist, {
     lazy: true,
     cascade: true,
     onDelete: "SET NULL",
+    onUpdate: "SET NULL",
     nullable: true,
   })
-  @JoinColumn({ name: "displayId" })
-  display: Display;
+  @JoinColumn()
+  display: Promise<Display>;
+  @Column({ nullable: true })
+  displayId: string;
   @OneToMany(
     () => ContentToPlaylist,
     (contentToPlaylist) => contentToPlaylist.playlist,
@@ -41,6 +46,5 @@ export class Playlist {
       cascade: true,
     }
   )
-  @JoinColumn()
   contentToPlaylist: ContentToPlaylist[];
 }

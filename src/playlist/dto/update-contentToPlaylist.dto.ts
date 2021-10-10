@@ -4,6 +4,6 @@ import { ContentToPlaylistDto } from "./content-to-playlist.dto";
 export class UpdateContentToPlaylistDto extends PartialType(
   OmitType(ContentToPlaylistDto, ["contentId"] as const)
 ) {
-  @ApiProperty({ example: "12" })
+  @ApiProperty({ example: "1" })
   contentToPlaylistId: string;
 }

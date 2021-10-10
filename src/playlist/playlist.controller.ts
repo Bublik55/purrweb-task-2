@@ -69,21 +69,18 @@ export class PlaylistController {
     type: GetPlaylistDto,
   })
   @Get(":id")
-  async findOne(@Param("id") id: string) {
+  async findOne(@Param("id", PlaylistExistsPipe) id: string) {
     const obj = await this.playlistService.findOne(+id);
     return new GetPlaylistDto(obj);
   }
 
   @UseGuards(PlaylistOwnerGuard)
-  @ApiOperation({
-    summary: "Update playlist by ID",
-    description: "Set new order and/or duration of contentToPlaylist",
-  })
+  @ApiOperation({ summary: "Update playlist by ID" })
   @ApiResponse({ status: 200 })
   @Patch(":id")
   async update(
-    @Param("id") id: string,
-    @Body(ChangeOrderValidation) dto: UpdatePlaylistDto
+    @Param("id", PlaylistExistsPipe) id: string,
+    @Body(PutPlaylistValidation) dto: UpdatePlaylistDto
   ) {
     await this.playlistService.update(+id, dto);
   }
@@ -96,29 +93,14 @@ export class PlaylistController {
     await this.playlistService.remove(+id);
   }
 
-  @Put(":id/content")
   @UseGuards(PlaylistOwnerGuard)
+  @Put(":id/content")
   @ApiOperation({ summary: "Change order and/or duration of content" })
   @ApiResponse({ status: 200 })
   async setNewDurationOrder(
-    @Param("id", ChangeOrderValidation) id: string,
-    @Body(PutPlaylistValidation) dto: UpdateContentToPlaylistDto
+    @Param("id", PlaylistExistsPipe) id: string,
+    @Body(ChangeOrderValidation) dto: UpdateContentToPlaylistDto
   ) {
     await this.playlistService.updateContentToPlaylist(id, dto);
-  }
-
-  @ApiOperation({
-    summary: "Attach playlist to display",
-    description:
-      "If Any playlist was attached to display - this action rewrite relations",
-  })
-  @ApiResponse({ status: 200, type: GetPlaylistDto })
-  @Put(":id/display/:displayid")
-  async attachPlaylist(
-    @Param("id", PlaylistExistsPipe) id: string,
-    @Param("displayid", DisplayExistsPipe) playlistId: string
-  ) {
-    console.log(id, playlistId);
-    this.playlistService.atttachPlaylist(id, playlistId);
   }
 }

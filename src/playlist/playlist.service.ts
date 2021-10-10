@@ -1,6 +1,6 @@
-import { forwardRef, Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DisplayService } from "src/display/display.service";
+import { Display } from "src/display/entities/display.entity";
 import { Repository } from "typeorm";
 import { CreatePlaylistDto } from "./dto/create-playlist.dto";
 import { UpdateContentToPlaylistDto } from "./dto/update-contentToPlaylist.dto";
@@ -14,12 +14,11 @@ export class PlaylistService {
     @InjectRepository(Playlist)
     private playlistRepository: Repository<Playlist>,
     @InjectRepository(ContentToPlaylist)
-    private contentToPlayListRepository: Repository<ContentToPlaylist>,
-    @Inject(forwardRef(() => DisplayService))
-    private displayService: DisplayService
+    private contentToPlayListRepository: Repository<ContentToPlaylist>
   ) {}
 
   async create(dto: CreatePlaylistDto) {
+    console.log(dto);
     return await this.playlistRepository.save(dto);
   }
 
@@ -44,20 +43,21 @@ export class PlaylistService {
     await this.flexPlaylist(dto, playlist);
   }
 
-  async atttachPlaylist(id: string, displayId: string) {
-    const playlist = await this.findOne(+id);
-    const display = await this.displayService.findOne(+displayId);
-    if (display.playlist) {
-      const pl = await display.playlist;
-      pl.display = null;
-      this.playlistRepository.save(pl);
-    }
-    playlist.display = display;
-    this.playlistRepository.save(playlist);
-  }
-
   async getContentToPlaylistById(id: string) {
     return await this.contentToPlayListRepository.findOne(+id);
+  }
+
+  async attachDisplay(id, displayId) {
+    console.log(id, displayId);
+    this.playlistRepository.update(id, { displayId: displayId });
+  }
+
+  async deleteDisplayFromPlaylist(id) {
+    await this.playlistRepository.update({ id: id }, { display: null });
+  }
+
+  async getPlaylistByDisplayId(id) {
+    return this.playlistRepository.findOne({ where: { displayId: id } });
   }
 
   private async flexPlaylist(

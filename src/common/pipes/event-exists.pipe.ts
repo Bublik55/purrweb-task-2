@@ -11,8 +11,8 @@ export class EventExistsPipe implements PipeTransform {
   constructor(private service: EventService) {}
 
   async transform(id: string, meta: ArgumentMetadata) {
-    const user = await this.service.findOne(+id);
-    if (user) throw new NotFoundException("Event don't exists");
+    const event = await this.service.findOne(+id);
+    if (!event) throw new NotFoundException("Event don't exists");
     return id;
   }
 }
