@@ -15,7 +15,7 @@ export class ContentGuard extends AuthGuard("jwt") {
   async canActivate(context: ExecutionContext) {
     const userEntityIds = UserEntityIds(context);
     const content = await this.contentService.findOne(userEntityIds.entityID);
-    if ((await content.author).id == userEntityIds.userID) {
+    if (content && (await content.author).id == userEntityIds.userID) {
       return true;
     } else throw new ForbiddenException("Forbidden operation for user");
   }

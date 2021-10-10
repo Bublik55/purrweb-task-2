@@ -12,25 +12,23 @@ export class ContentService {
     private contentRepository: Repository<Content>
   ) {}
 
-  async create(dto: CreateContentDto) {
+  async create(dto: CreateContentDto): Promise<Content> {
     return await this.contentRepository.save(dto);
   }
 
-  async findAll() {
-    return await this.contentRepository.find({ relations: ["author"] });
+  async findAll(): Promise<Content[]> {
+    return await this.contentRepository.find();
   }
 
-  async findOne(id: number) {
-    return await this.contentRepository.findOne(id, {
-      relations: ["author"],
-    });
+  async findOne(id: number): Promise<Content> {
+    return await this.contentRepository.findOne(id);
   }
 
-  async update(id: number, dto: UpdateContentDto) {
+  async update(id: number, dto: UpdateContentDto): Promise<void> {
     await this.contentRepository.update(id, dto);
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<void> {
     await this.contentRepository.delete(id);
   }
 }

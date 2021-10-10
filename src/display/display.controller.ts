@@ -16,10 +16,10 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { CreatorGuards } from "src/common/guards/creator.guard";
+import { CreatorGuard } from "src/common/guards/creator.guard";
 import { DisplayExistsPipe } from "src/common/pipes/display-exists.pipe";
 import { PlaylistExistsPipe } from "src/common/pipes/playlist-exists.pipe";
-import { DisplayOwnerGuard } from "src/display/guards/display.owner.guard";
+import { DisplayGuard } from "src/display/guards/display.owner.guard";
 import { GetEventDto } from "src/event/dto/get-event.dto";
 import { GetPlaylistDto } from "src/playlist/dto/get-playlist.dto";
 import { GetUserDto } from "src/user/dto/get-user.dto";
@@ -35,7 +35,7 @@ import { UpdateDisplayPipe } from "./pipes/update-display.pipe";
 export class DisplayController {
   constructor(private readonly displayService: DisplayService) {}
 
-  @UseGuards(CreatorGuards)
+  @UseGuards(CreatorGuard)
   @ApiOperation({
     summary: "Create display",
     description: "Create display and attach to event",
@@ -72,7 +72,7 @@ export class DisplayController {
     return new GetDisplayDto(obj);
   }
 
-  @UseGuards(DisplayOwnerGuard)
+  @UseGuards(DisplayGuard)
   @ApiOperation({
     summary: "Update Display by ID",
     description: "Attach Display to other event",
@@ -86,7 +86,7 @@ export class DisplayController {
     this.displayService.update(+id, updateDisplayDto);
   }
 
-  @UseGuards(DisplayOwnerGuard)
+  @UseGuards(DisplayGuard)
   @ApiOperation({ summary: "Delete display" })
   @ApiResponse({ status: 200 })
   @Delete(":id")
@@ -103,6 +103,7 @@ export class DisplayController {
     return new GetEventDto(event);
   }
 
+  @UseGuards(DisplayGuard)
   @ApiOperation({ summary: "Get Author/owner of display" })
   @ApiResponse({ status: 200, type: GetUserDto })
   @Get(":id/user")
@@ -112,6 +113,7 @@ export class DisplayController {
     return new GetUserDto(await user);
   }
 
+  @UseGuards(DisplayGuard)
   @ApiOperation({ summary: "Get Playlist by Display" })
   @ApiResponse({ status: 200, type: GetPlaylistDto })
   @Get(":id/playlist")
@@ -121,7 +123,7 @@ export class DisplayController {
     return new GetPlaylistDto(playlist);
   }
 
-  @UseGuards(DisplayOwnerGuard)
+  @UseGuards(DisplayGuard)
   @ApiOperation({
     summary: "Attach playlist to display",
     description:

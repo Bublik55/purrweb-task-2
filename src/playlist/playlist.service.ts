@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Display } from "src/display/entities/display.entity";
 import { Repository } from "typeorm";
 import { CreatePlaylistDto } from "./dto/create-playlist.dto";
 import { UpdateContentToPlaylistDto } from "./dto/update-contentToPlaylist.dto";
@@ -17,16 +16,16 @@ export class PlaylistService {
     private contentToPlayListRepository: Repository<ContentToPlaylist>
   ) {}
 
-  async create(dto: CreatePlaylistDto) {
+  async create(dto: CreatePlaylistDto): Promise<Playlist> {
     console.log(dto);
     return await this.playlistRepository.save(dto);
   }
 
-  findAll() {
+  findAll(): Promise<Playlist[]> {
     return this.playlistRepository.find();
   }
 
-  findOne(id: number) {
+  findOne(id: number): Promise<Playlist> {
     return this.playlistRepository.findOne(id);
   }
 
@@ -34,36 +33,39 @@ export class PlaylistService {
     return this.playlistRepository.update(id, dto);
   }
 
-  remove(id: number) {
-    return this.playlistRepository.delete(id);
+  async remove(id: number): Promise<void> {
+    await this.playlistRepository.delete(id);
   }
   /**** */
-  async updateContentToPlaylist(id, dto: UpdateContentToPlaylistDto) {
+  async updateContentToPlaylist(
+    id: string,
+    dto: UpdateContentToPlaylistDto
+  ): Promise<void> {
     const playlist: Playlist = await this.playlistRepository.findOne(id);
     await this.flexPlaylist(dto, playlist);
   }
 
-  async getContentToPlaylistById(id: string) {
+  async getContentToPlaylistById(id: string): Promise<ContentToPlaylist> {
     return await this.contentToPlayListRepository.findOne(+id);
   }
 
-  async attachDisplay(id, displayId) {
+  async attachDisplay(id, displayId): Promise<void> {
     console.log(id, displayId);
     this.playlistRepository.update(id, { displayId: displayId });
   }
 
-  async deleteDisplayFromPlaylist(id) {
+  async deleteDisplayFromPlaylist(id): Promise<void> {
     await this.playlistRepository.update({ id: id }, { display: null });
   }
 
-  async getPlaylistByDisplayId(id) {
+  async getPlaylistByDisplayId(id): Promise<Playlist> {
     return this.playlistRepository.findOne({ where: { displayId: id } });
   }
 
   private async flexPlaylist(
     dto: UpdateContentToPlaylistDto,
     playlist: Playlist
-  ) {
+  ): Promise<void> {
     const ctp = await this.contentToPlayListRepository.findOne(
       dto.contentToPlaylistId
     );
@@ -83,7 +85,6 @@ export class PlaylistService {
           }
         }
         this.contentToPlayListRepository.update(cur.id, cur);
-        return cur;
       });
       this.contentToPlayListRepository.update(ctp.id, ctp);
     }

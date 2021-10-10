@@ -16,7 +16,7 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { ContentGuard } from "src/content/guards/content.owner.guard";
-import { CreatorGuards } from "src/common/guards/creator.guard";
+import { CreatorGuard } from "src/common/guards/creator.guard";
 import { ContentService } from "./content.service";
 import { CreateContentDto } from "./dto/create-content.dto";
 import { GetContentDto } from "./dto/get-content.dto";
@@ -29,11 +29,8 @@ import { ContentExistPipe } from "../common/pipes/content-exists.pipe";
 export class ContentController {
   constructor(private readonly contentService: ContentService) {}
 
-  @UseGuards(CreatorGuards)
-  @ApiOperation({
-    summary: "Create content",
-    description: "Create content - save url in DB",
-  })
+  @UseGuards(CreatorGuard)
+  @ApiOperation({ summary: "Create content" })
   @ApiResponse({ status: 201, type: GetContentDto })
   @Post()
   async create(@Body() createContentDto: CreateContentDto) {

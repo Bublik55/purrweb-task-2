@@ -15,32 +15,28 @@ export class EventService {
     private displayService: DisplayService
   ) {}
 
-  async create(createEventDto: CreateEventDto) {
+  async create(createEventDto: CreateEventDto): Promise<Event> {
     return this.eventRepository.save(createEventDto);
   }
 
-  async findAll() {
-    return this.eventRepository.find({
-      relations: ["author", "displays"],
-    });
+  async findAll(): Promise<Event[]> {
+    return this.eventRepository.find();
   }
 
-  async findOne(id: number) {
-    const event = await this.eventRepository.findOne(id, {
-      relations: ["author", "displays"],
-    });
+  async findOne(id: number): Promise<Event> {
+    const event = await this.eventRepository.findOne(id);
     return event;
   }
 
-  async update(id: number, updateEventDto: UpdateEventDto) {
+  async update(id: number, updateEventDto: UpdateEventDto): Promise<void> {
     await this.eventRepository.update(id, updateEventDto);
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<void> {
     await this.eventRepository.delete(id);
   }
 
-  async attachDisplayToEvent(id: string, displayId: string) {
+  async attachDisplayToEvent(id: string, displayId: string): Promise<void> {
     const event = await this.findOne(+id);
     const display = await this.displayService.findOne(+displayId);
     (await event.displays).push(display);

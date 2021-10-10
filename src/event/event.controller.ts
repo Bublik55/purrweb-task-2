@@ -16,7 +16,7 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { CreatorGuards } from "src/common/guards/creator.guard";
+import { CreatorGuard } from "src/common/guards/creator.guard";
 import { DisplayExistsPipe } from "src/common/pipes/display-exists.pipe";
 import { EventExistsPipe } from "src/common/pipes/event-exists.pipe";
 import { GetDisplayDto } from "src/display/dto/get-display.dto";
@@ -32,7 +32,7 @@ import { EventService } from "./event.service";
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
-  @UseGuards(CreatorGuards)
+  @UseGuards(CreatorGuard)
   @ApiOperation({
     summary: "Create event",
     description: "Create event and attach user to its.",

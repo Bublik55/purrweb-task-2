@@ -15,10 +15,10 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { CreatorGuards } from "src/common/guards/creator.guard";
+import { CreatorGuard } from "src/common/guards/creator.guard";
 import { DisplayExistsPipe } from "src/common/pipes/display-exists.pipe";
 import { PlaylistExistsPipe } from "src/common/pipes/playlist-exists.pipe";
-import { PlaylistOwnerGuard } from "src/playlist/guards/playlist.owner.guard";
+import { PlaylistGuard } from "src/playlist/guards/playlist.owner.guard";
 import { CreatePlaylistDto } from "./dto/create-playlist.dto";
 import { GetPlaylistDto } from "./dto/get-playlist.dto";
 import { UpdateContentToPlaylistDto } from "./dto/update-contentToPlaylist.dto";
@@ -33,7 +33,7 @@ import { PlaylistService } from "./playlist.service";
 export class PlaylistController {
   constructor(private readonly playlistService: PlaylistService) {}
 
-  @UseGuards(CreatorGuards)
+  @UseGuards(CreatorGuard)
   @ApiOperation({
     summary: "Create Playlist",
     description:
@@ -48,10 +48,7 @@ export class PlaylistController {
     return new GetPlaylistDto(playlist);
   }
 
-  @ApiOperation({
-    summary: "Get playlists",
-    description: "Get playlists",
-  })
+  @ApiOperation({ summary: "Get playlists" })
   @ApiResponse({ status: 200, type: [GetPlaylistDto] })
   @Get()
   async findAll() {
@@ -59,11 +56,8 @@ export class PlaylistController {
     return ret.map((pl) => new GetPlaylistDto(pl));
   }
 
-  @UseGuards(PlaylistOwnerGuard)
-  @ApiOperation({
-    summary: "Get playlist by ID",
-    description: "Get playlist",
-  })
+  @UseGuards(PlaylistGuard)
+  @ApiOperation({ summary: "Get playlist by ID" })
   @ApiResponse({
     status: 200,
     type: GetPlaylistDto,
@@ -74,7 +68,7 @@ export class PlaylistController {
     return new GetPlaylistDto(obj);
   }
 
-  @UseGuards(PlaylistOwnerGuard)
+  @UseGuards(PlaylistGuard)
   @ApiOperation({ summary: "Update playlist by ID" })
   @ApiResponse({ status: 200 })
   @Patch(":id")
@@ -85,7 +79,7 @@ export class PlaylistController {
     await this.playlistService.update(+id, dto);
   }
 
-  @UseGuards(PlaylistOwnerGuard)
+  @UseGuards(PlaylistGuard)
   @ApiOperation({ summary: "Delete playlist" })
   @ApiResponse({ status: 200 })
   @Delete(":id")
@@ -93,9 +87,11 @@ export class PlaylistController {
     await this.playlistService.remove(+id);
   }
 
-  @UseGuards(PlaylistOwnerGuard)
+  @UseGuards(PlaylistGuard)
   @Put(":id/content")
-  @ApiOperation({ summary: "Change order and/or duration of content" })
+  @ApiOperation({
+    summary: "Change order and/or duration of contentToPlaylist",
+  })
   @ApiResponse({ status: 200 })
   async setNewDurationOrder(
     @Param("id", PlaylistExistsPipe) id: string,

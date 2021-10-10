@@ -4,22 +4,17 @@ import {
   Injectable,
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Event } from "src/event/entities/event.entity";
-import { Repository } from "typeorm";
 import { UserEntityIds } from "../../common/utills";
+import { EventService } from "../event.service";
 @Injectable()
 export class EventGuard extends AuthGuard("jwt") {
-  constructor(
-    @InjectRepository(Event)
-    private eventRepository: Repository<Event>
-  ) {
-    super(eventRepository);
+  constructor(private eventService: EventService) {
+    super(eventService);
   }
 
   async canActivate(context: ExecutionContext) {
     const userEntityIds = UserEntityIds(context);
-    const event = await this.eventRepository.findOne(userEntityIds.entityID);
+    const event = await this.eventService.findOne(userEntityIds.entityID);
 
     if (event && event.authorId == userEntityIds.userID) {
       return true;

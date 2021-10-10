@@ -44,6 +44,8 @@ export class AuthService {
   private async generateToken(data: User) {
     // REVU: нет sub и aud
     const token = await this.jwtService.signAsync({
+      aud: "user",
+      sub: "auth",
       id: data.id,
       name: data.username,
       password: data.password,

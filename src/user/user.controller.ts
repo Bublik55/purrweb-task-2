@@ -29,10 +29,7 @@ import { UserService } from "./user.service";
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @ApiOperation({
-    summary: "Create User",
-    description: "Create user",
-  })
+  @ApiOperation({ summary: "Create User" })
   @ApiResponse({ status: 201, type: GetUserDto })
   @Post()
   async create(@Body(CreateUserPipe) createUserDto: CreateUserDto) {
@@ -40,11 +37,7 @@ export class UserController {
     return new GetUserDto(user);
   }
 
-  // REVU: Кажется что без гварда, тут кто-угодно может получить информацию о всех юзерах
-  @ApiOperation({
-    summary: "Get Users",
-    description: "Get all users with events",
-  })
+  @ApiOperation({ summary: "Get Users" })
   @ApiResponse({ status: 200, type: [GetUserDto] })
   @Get()
   async findAll() {
@@ -52,7 +45,7 @@ export class UserController {
     return users.map((user) => new GetUserDto(user));
   }
 
-  // REVU: Кажется что без гварда, тут кто-угодно может получить информацию о любом юзере
+  @UseGuards(UserGuard)
   @ApiOperation({ summary: "Get User by id" })
   @ApiResponse({ status: 200, type: GetUserDto })
   @Get(":id")
@@ -80,6 +73,7 @@ export class UserController {
     return this.userService.remove(id);
   }
 
+  @UseGuards(UserGuard)
   @ApiOperation({ summary: "Get events by user" })
   @ApiResponse({ status: 200, type: [GetEventDto] })
   @Get(":id/events")

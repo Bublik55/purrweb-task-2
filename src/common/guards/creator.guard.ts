@@ -7,7 +7,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { UserDtoIds } from "../utills";
 
 @Injectable()
-export class CreatorGuards extends AuthGuard("jwt") {
+export class CreatorGuard extends AuthGuard("jwt") {
   constructor() {
     super({});
   }
@@ -16,9 +16,6 @@ export class CreatorGuards extends AuthGuard("jwt") {
     const udi = UserDtoIds(context);
     if (udi.userDtoId == udi.authorId) {
       return true;
-    } else
-      throw new ForbiddenException(
-        "Forbidden operation for user. Dont try put id which is not your"
-      );
+    } else throw new ForbiddenException("Forbidden operation for user");
   }
 }
